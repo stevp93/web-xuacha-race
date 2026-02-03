@@ -143,6 +143,7 @@
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#ruta" class="text-gray-300 hover:text-[#76FF03] transition">Ruta</a>
+                    <a href="#premiacion" class="text-gray-300 hover:text-[#76FF03] transition">Premiación</a>
                     <a href="#kit" class="text-gray-300 hover:text-[#76FF03] transition">Kit</a>
                     <a href="#contacto" class="text-gray-300 hover:text-[#76FF03] transition">Contacto</a>
                     <button onclick="window.location.href=GOOGLE_FORM_URL"
@@ -160,6 +161,7 @@
             <div id="mobile-menu" class="mobile-menu md:hidden">
                 <div class="flex flex-col space-y-4 mt-4 pb-4">
                     <a href="#ruta" class="text-gray-300 hover:text-[#76FF03] transition py-2">Ruta</a>
+                    <a href="#premiacion" class="text-gray-300 hover:text-[#76FF03] transition py-2">Premiación</a>
                     <a href="#kit" class="text-gray-300 hover:text-[#76FF03] transition py-2">Kit</a>
                     <a href="#contacto" class="text-gray-300 hover:text-[#76FF03] transition py-2">Contacto</a>
                     <button onclick="window.location.href=GOOGLE_FORM_URL"
@@ -425,7 +427,204 @@
         </div>
     </section>
 
+    <!-- PREMIACION SECTION -->
+    <section id="premiacion" class="py-20 bg-black">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-6xl font-bold text-center mb-4">
+                PREMIACIÓN <span class="text-[#76FF03]">EFECTIVA</span>
+            </h2>
+            <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
+                Premios en efectivo para los primeros lugares en cada categoría
+            </p>
 
+            <!-- Premiacion Table Container -->
+            <div class="max-w-6xl mx-auto">
+                <div
+                    class="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm rounded-2xl border border-[#76FF03]/30 overflow-hidden shadow-[0_0_40px_rgba(118,255,3,0.15)]">
+                    <!-- Table Header -->
+                    <div class="bg-gradient-to-r from-[#FF5722] to-[#76FF03] p-1">
+                        <div class="bg-black px-6 py-4">
+                            <h3 class="text-2xl md:text-3xl font-bold text-center gradient-text">
+                                TABLA DE PREMIACIÓN POR CATEGORÍA
+                            </h3>
+                        </div>
+                    </div>
+
+                    <!-- Responsive Table Wrapper -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-gray-800">
+                                    <th class="px-6 py-5 text-lg md:text-xl font-bold text-[#76FF03]">CATEGORÍA</th>
+                                    <th class="px-6 py-5 text-lg md:text-xl font-bold text-center text-[#FFD700]">
+                                        <i class="fas fa-trophy mr-2"></i>PRIMERO
+                                    </th>
+                                    <th class="px-6 py-5 text-lg md:text-xl font-bold text-center text-[#C0C0C0]">
+                                        <i class="fas fa-medal mr-2"></i>SEGUNDO
+                                    </th>
+                                    <th class="px-6 py-5 text-lg md:text-xl font-bold text-center text-[#CD7F32]">
+                                        <i class="fas fa-award mr-2"></i>TERCERO
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- OPEN FEMENINO -->
+                                <tr
+                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#FF5722]/10 hover:to-[#76FF03]/10 transition-all duration-300">
+                                    <td class="px-6 py-5 font-semibold text-white">
+                                        <i class="fas fa-female text-[#FF5722] mr-2"></i>OPEN FEMENINO
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
+                                        $300,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
+                                        $200,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
+                                        $100,000
+                                    </td>
+                                </tr>
+
+                                <!-- MASTER A FEMENINO -->
+                                <tr
+                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#76FF03]/10 hover:to-[#FF5722]/10 transition-all duration-300">
+                                    <td class="px-6 py-5 font-semibold text-white">
+                                        <i class="fas fa-female text-[#76FF03] mr-2"></i>MASTER A FEMENINO
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
+                                        $300,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
+                                        $200,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
+                                        $100,000
+                                    </td>
+                                </tr>
+
+                                <!-- OPEN MASCULINO -->
+                                <tr
+                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#FF5722]/10 hover:to-[#76FF03]/10 transition-all duration-300">
+                                    <td class="px-6 py-5 font-semibold text-white">
+                                        <i class="fas fa-male text-[#FF5722] mr-2"></i>OPEN MASCULINO
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
+                                        $300,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
+                                        $200,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
+                                        $100,000
+                                    </td>
+                                </tr>
+
+                                <!-- MASTER A MASCULINO -->
+                                <tr
+                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#76FF03]/10 hover:to-[#FF5722]/10 transition-all duration-300">
+                                    <td class="px-6 py-5 font-semibold text-white">
+                                        <i class="fas fa-male text-[#76FF03] mr-2"></i>MASTER A MASCULINO
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
+                                        $300,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
+                                        $200,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
+                                        $100,000
+                                    </td>
+                                </tr>
+
+                                <!-- MASTER B MASCULINO -->
+                                <tr
+                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#FF5722]/10 hover:to-[#76FF03]/10 transition-all duration-300">
+                                    <td class="px-6 py-5 font-semibold text-white">
+                                        <i class="fas fa-male text-[#FF5722] mr-2"></i>MASTER B MASCULINO
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
+                                        $300,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
+                                        $200,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
+                                        $100,000
+                                    </td>
+                                </tr>
+
+                                <!-- MASTER C MASCULINO -->
+                                <tr
+                                    class="hover:bg-gradient-to-r hover:from-[#76FF03]/10 hover:to-[#FF5722]/10 transition-all duration-300">
+                                    <td class="px-6 py-5 font-semibold text-white">
+                                        <i class="fas fa-male text-[#76FF03] mr-2"></i>MASTER C MASCULINO
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
+                                        $300,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
+                                        $200,000
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
+                                        $100,000
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Prize Info Footer -->
+                    <div class="bg-gradient-to-r from-[#FF5722]/20 to-[#76FF03]/20 px-6 py-4 border-t border-gray-800">
+                        <div
+                            class="flex flex-wrap items-center justify-center gap-4 text-sm md:text-base text-gray-300">
+                            <div class="flex items-center">
+                                <i class="fas fa-info-circle text-[#76FF03] mr-2"></i>
+                                <span>Premiación inmediata después de la ceremonia</span>
+                            </div>
+                            <div class="hidden md:block text-gray-600">|</div>
+                            <div class="flex items-center">
+                                <i class="fas fa-hand-holding-usd text-[#FF5722] mr-2"></i>
+                                <span>Premios en efectivo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Info Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    <div
+                        class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700 card-hover text-center">
+                        <div class="text-4xl text-[#FFD700] mb-3">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">Total en Premios</h4>
+                        <p class="text-2xl font-bold gradient-text">$3,600,000</p>
+                        <p class="text-sm text-gray-400 mt-2">Distribuidos en 6 categorías</p>
+                    </div>
+
+                    <div
+                        class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700 card-hover text-center">
+                        <div class="text-4xl text-[#76FF03] mb-3">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">6 Categorías</h4>
+                        <p class="text-gray-300 text-sm">Open y Master</p>
+                        <p class="text-sm text-gray-400 mt-2">Masculino y Femenino</p>
+                    </div>
+
+                    <div
+                        class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700 card-hover text-center">
+                        <div class="text-4xl text-[#FF5722] mb-3">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">Podio Completo</h4>
+                        <p class="text-gray-300 text-sm">3 lugares premiados</p>
+                        <p class="text-sm text-gray-400 mt-2">En cada categoría</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- KIT SECTION -->
     <section id="kit" class="py-20 bg-gradient-to-b from-gray-900 to-black">
