@@ -4,6 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Analytics 4 (GA4) -->
+    <!-- IMPORTANTE: Reemplaza 'G-XXXXXXXXXX' con tu ID de medición de Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KH5PJ7J02K"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        // Configuración principal de GA4
+        gtag('config', 'G-KH5PJ7J02K', {
+            'send_page_view': true,
+            'anonymize_ip': false // Permite ver países/ciudades de origen
+        });
+
+        // Función para rastrear clics en botones de inscripción
+        function trackRegistrationClick(source) {
+            gtag('event', 'click_inscripcion', {
+                'event_category': 'engagement',
+                'event_label': source,
+                'value': 1
+            });
+        }
+
+        // Función para rastrear clics en WhatsApp
+        function trackWhatsAppClick(context) {
+            gtag('event', 'click_whatsapp', {
+                'event_category': 'contact',
+                'event_label': context,
+                'value': 1
+            });
+        }
+
+        // Función para rastrear visualización de secciones
+        function trackSectionView(section_name) {
+            gtag('event', 'view_section', {
+                'event_category': 'navigation',
+                'event_label': section_name,
+                'value': 1
+            });
+        }
+    </script>
+
     <meta name="description"
         content="XUACHA RACE 2026 - Desafía la montaña en la carrera de MTB más extrema de Soacha, Cundinamarca">
     <title>XUACHA RACE 2026 - Carrera MTB Extrema</title>
@@ -224,7 +267,7 @@
             </div>
 
             <!-- CTA Button -->
-            <button onclick="window.open(GOOGLE_FORM_URL, '_blank')"
+            <button onclick="trackRegistrationClick('hero_cta'); window.open(GOOGLE_FORM_URL, '_blank')"
                 class="pulse-btn bg-[#FF5722] hover:bg-[#E64A19] text-white px-12 py-5 rounded-full text-xl font-bold transition inline-flex items-center space-x-3">
                 <span>INSCRÍBETE AHORA</span>
                 <i class="fas fa-chevron-right"></i>
@@ -902,7 +945,7 @@
                     </div>
 
                     <p class="text-gray-400 mb-6">¡Asegura tu cupo al mejor precio!</p>
-                    <button onclick="window.open(GOOGLE_FORM_URL, '_blank')"
+                    <button onclick="trackRegistrationClick('pricing_cta'); window.open(GOOGLE_FORM_URL, '_blank')"
                         class="bg-[#FF5722] hover:bg-[#E64A19] text-white px-12 py-5 rounded-full text-xl font-bold transition transform hover:scale-105">
                         INSCRIBIRME YA
                         <i class="fas fa-arrow-right ml-2"></i>
@@ -1135,6 +1178,26 @@
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                     <span class="hidden text-xl font-bold text-gray-800">BICLYCLE</span>
                 </div>
+
+                <!-- Gelatina yovi-->
+                <div
+                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
+                    <img src="ruta/a/tu/yovi.png" alt=" GELATINAS YOVI"
+                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <span class="hidden text-xl font-bold text-gray-800">GELATINAS YOVI</span>
+                </div>
+
+
+                <!-- TROCHA Y BARRO  -->
+                <div
+                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
+                    <img src="ruta/a/tu/trochaybarro.png" alt="TROCHA Y BARRO"
+                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <span class="hidden text-xl font-bold text-gray-800">TROCHA Y BARRO</span>
+                </div>
+
             </div>
         </div>
     </section>
@@ -1194,7 +1257,7 @@
                     </ul>
                     <div class="mt-6">
                         <a href="https://wa.me/573239335820?text=Hola,%20quiero%20informacion%20sobre%20la%20el%20a%20XUACHA%20RACE"
-                            target="_blank" rel="noopener noreferrer"
+                            target="_blank" rel="noopener noreferrer" onclick="trackWhatsAppClick('footer_contact')"
                             class="inline-flex items-center justify-center bg-[#76FF03] hover:bg-[#5ed600] text-black px-6 py-3 rounded-full text-sm font-bold transition transform hover:scale-105 w-full">
                             <i class="fab fa-whatsapp mr-2"></i>CONTACTANOS
                         </a>
