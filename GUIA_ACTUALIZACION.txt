@@ -1,0 +1,28 @@
+# COMANDOS PARA ACTUALIZAR LA WEB (GIT)
+
+Cada vez que realices un cambio en los archivos de tu proyecto y quieras que se reflejen en la página web pública, sigue estos pasos en la terminal:
+
+## 1. Preparar los archivos
+Este comando "marca" los archivos que has modificado para incluirlos en la actualización.
+```powershell
+git add .
+```
+
+## 2. Guardar los cambios (Commit)
+Este comando guarda los cambios localmente con un mensaje que explica qué hiciste.
+```powershell
+git commit -m "Escribe aquí tu mensaje de lo que cambiaste"
+```
+
+## 3. Subir a la Web (Push)
+Este comando envía tus cambios a GitHub. Una vez completado, GitHub Pages actualizará la web en unos minutos.
+```powershell
+git push
+```
+
+---
+
+### Notas adicionales:
+- **Mensajes de commit**: Es recomendable ser descriptivo (ej: "Sustitución de logo por video" o "Corrección de precios").
+- **Frecuencia**: Puedes hacer muchos cambios y usar estos comandos una sola vez al final de tu jornada para subir todo junto.
+- **Verificar estado**: Si quieres ver qué archivos has cambiado antes de subirlos, usa: `git status`
