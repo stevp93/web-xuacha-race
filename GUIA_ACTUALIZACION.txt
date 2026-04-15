@@ -26,3 +26,9 @@ git push
 - **Mensajes de commit**: Es recomendable ser descriptivo (ej: "Sustitución de logo por video" o "Corrección de precios").
 - **Frecuencia**: Puedes hacer muchos cambios y usar estos comandos una sola vez al final de tu jornada para subir todo junto.
 - **Verificar estado**: Si quieres ver qué archivos has cambiado antes de subirlos, usa: `git status`
+
+
+# Cambios realizados:
+git add .
+git commit -m "feat: agregar nuevo patrocinador SALAS BIKE"
+git push origin main
