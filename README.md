@@ -40,7 +40,10 @@ assets/
   js/site.js          Motor de animación: película, pines, parallax, cursor, analítica diferida
   js/inscripcion.js, js/admin.js, js/xr-api.js
   js/xr-config.js     Configuración pública del formulario (URL de la API, WhatsApp de soporte)
-  film/d/, film/m/    121 fotogramas WebP de la portada (escritorio 1600 px / celular 900 px)
+  film/d/             121 fotogramas WebP de la portada, horizontales 1924×1076 (escritorio y tabletas)
+  film/m/             121 fotogramas WebP verticales 720×1076 para celular, con paneo que sigue al ciclista
+  img/brand/          Logo oficial en SVG: completo, símbolo y palabra
+  img/favicon.svg, img/apple-touch-icon.png, img/og-xuacha-race.jpg   Íconos e imagen para redes
   img/scene-*.webp    Fondos de las páginas internas y póster de la portada
   img/spa/            Marca SP Automatizaciones
   img/sponsors/, video/   Material de la edición 2026; ya no se enlaza desde el sitio
@@ -51,6 +54,25 @@ tools/
   extraer_fotogramas.sh   Convierte un video en la secuencia de fotogramas de la portada
 Documentos/           Reglamento y libro de ruta 2026 (PDF)
 ```
+
+## Marca
+
+Logo oficial de XUACHA RACE: figura de inspiración muisca con cabeza de sol y la palabra
+"XuachaRace" con trazo de pincel (el mismo del perfil @xuacharace y de `assets/video/logo_xuacha.mp4`).
+Se vectorizó a partir del video original en 2160 px y está en `assets/img/brand/`:
+
+| Archivo | Uso |
+| --- | --- |
+| `xr-logo.svg` | Logo completo: portada, pie de página, imagen para redes |
+| `xr-simbolo.svg` | Solo la figura: cabecera, pantalla de carga, favicon |
+| `xr-palabra.svg` | Solo la palabra: cabecera junto al símbolo |
+
+Color: crema `#EACFB5`, tomado del video del logo. En Instagram el logo aparece en amarillo
+dorado; para cambiar el color basta con editar el atributo `fill` de los SVG.
+
+Dónde aparece: cabecera de todas las páginas (símbolo + palabra), pantalla de carga (el símbolo
+se llena de abajo arriba con el porcentaje), primer cuadro de la película de la portada, pie de
+página, favicon e ícono de inicio en iPhone, e imagen que se muestra al compartir el enlace.
 
 ## Diseño y movimiento
 
@@ -64,7 +86,12 @@ Dirección visual: cine de montaña y cinta de carrera. Negro profundo, naranja 
   `SE CONQUISTA` → `40 · 25 KM` → llamado a inscribirse) y un contador de 0 a 40 km.
 - **Carga progresiva.** Primero se descarga uno de cada ocho fotogramas para que el scroll funcione
   de inmediato y luego el resto. La pantalla de carga se retira al 35 % o a los 4,5 s, lo que ocurra
-  antes. En celular se usa el juego de 900 px.
+  antes.
+- **Calidad en celular.** Un teléfono en vertical muestra el fotograma por su altura. Por eso el
+  juego de celular no es una versión reducida del horizontal (eso obligaba a ampliarlo más de 3 veces
+  y se veía pixelado), sino un recorte vertical de 720×1076 a la resolución nativa del video, con un
+  paneo que mantiene al ciclista centrado. Se usa cuando la pantalla es vertical y mide menos de
+  900 px de ancho; en el resto se usa el juego horizontal.
 - **Rutas en horizontal.** La sección se fija y los paneles avanzan de lado mientras se baja.
 - **Otros efectos.** Cintas diagonales, manifiesto que se ilumina palabra por palabra, títulos que
   suben línea por línea, cifras animadas, parallax en fondos, barras de terreno, vista previa que
@@ -76,7 +103,8 @@ Dirección visual: cine de montaña y cinta de carrera. Negro profundo, naranja 
 - **Rendimiento.** Fuentes autoalojadas con precarga, imágenes WebP, carga diferida, y Google
   Analytics y Clarity solo cuando el navegador está inactivo.
 
-Verificado a 1440 px y 375 px: sin desbordamiento horizontal ni errores de consola.
+Verificado a 1440 px y en celular de 375 y 390 px (densidad 3x): sin desbordamiento horizontal ni
+errores de consola.
 
 ## Cómo hacer cambios
 
@@ -107,7 +135,9 @@ recordatorios por WhatsApp, respaldo y pruebas) está en [`backend/README.md`](b
 
 Antes de abrir inscripciones falta:
 
-1. Definir la plataforma de pagos y configurar sus llaves en Supabase.
+1. Definir la plataforma de pagos y configurar sus llaves en Supabase. El sitio público no nombra
+   ninguna pasarela; el panel de administración y el backend sí mencionan Wompi porque es el
+   adaptador implementado.
 2. Configurar `ADMIN_API_KEY` e `INTERNAL_API_KEY` en Supabase.
 3. Cargar fecha, valores y plan de cuotas de 2027 y abrir inscripciones.
 4. Actualizar el prompt del agente de WhatsApp (`system_prompt_agente_whatsapp.md`), que todavía

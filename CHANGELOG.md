@@ -1,5 +1,28 @@
 # Cambios
 
+## 2027.1 · 18 de noviembre de 2026
+
+### Calidad de la animación en celular
+- Causa: el juego de celular era el video reducido a 900×504. Un teléfono en vertical lo muestra
+  por su altura, así que se ampliaba unas 3,3 veces y se veía pixelado.
+- Solución: nuevo juego vertical de 720×1076 recortado a la resolución nativa del video, con
+  paneo que sigue al ciclista (ampliación ≈1,5 veces). Se elige por orientación, no solo por ancho.
+- El juego de escritorio pasa de 1600 px a la resolución nativa (1924×1076) y se activa el
+  suavizado de alta calidad del canvas.
+- `tools/extraer_fotogramas.sh` actualizado con estos parámetros (`PAN_START` y `PAN_END`).
+
+### Logo oficial
+- Logo vectorizado desde `assets/video/logo_xuacha.mp4` (2160 px) en tres versiones:
+  `assets/img/brand/xr-logo.svg`, `xr-simbolo.svg` y `xr-palabra.svg`.
+- Aplicado en la cabecera de todas las páginas, la pantalla de carga (el símbolo se llena con el
+  porcentaje), el primer cuadro de la portada y el pie de página.
+- Nuevo favicon, ícono para iPhone (`apple-touch-icon.png`) e imagen para compartir en redes
+  (`og-xuacha-race.jpg`, 1200×630).
+
+### Textos
+- El sitio público, el formulario y la página de resultado ya no nombran a Wompi, porque la
+  plataforma de pagos sigue sin definirse.
+
 ## 2027.0 · 18 de noviembre de 2026
 
 Rediseño completo para la edición 2027 e infraestructura de inscripciones.
