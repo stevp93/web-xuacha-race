@@ -1,0 +1,16 @@
+# Dependencias y compilados
+node_modules/
+backend/dist/
+
+# Secretos: nunca subir llaves reales
+.env
+.env.*
+!.env.example
+
+# Sistema y temporales
+.DS_Store
+Thumbs.db
+desktop.ini
+_to_delete/
+*.dump
+*.tgz
