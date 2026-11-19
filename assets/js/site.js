@@ -47,7 +47,7 @@
 
   // ---------- película ----------
   var film = $('#film'), canvas = film && $('canvas', film), ctx = canvas && canvas.getContext('2d');
-  var frames = [], frameCount = 0, current = -1, loaded = 0;
+  var frames = [], frameCount = 0, current = -1, loaded = 0, portraitSet = false;
   var beats = film ? $$('.beat', film) : [];
   var km = film && $('#km');
 
@@ -65,7 +65,10 @@
     if (!img || !img.naturalWidth) return;
     var cw = canvas.width, ch = canvas.height, iw = img.naturalWidth, ih = img.naturalHeight;
     var s = Math.max(cw / iw, ch / ih), w = iw * s, h = ih * s;
-    var fx = cw < ch ? 0.38 : 0.5; // en vertical se centra en el ciclista
+    // los fotogramas de celular ya vienen recortados siguiendo al ciclista; los de escritorio,
+    // vistos en una pantalla vertical (tableta), se corren hacia él
+    var fx = portraitSet ? 0.5 : (cw < ch ? 0.38 : 0.5);
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, (cw - w) * fx, (ch - h) / 2, w, h);
   }
   function sizeCanvas() {
@@ -77,7 +80,9 @@
 
   if (film) {
     frameCount = Number(film.getAttribute('data-frames'));
-    var set = W.innerWidth < 760 ? film.getAttribute('data-m') : film.getAttribute('data-d');
+    // celular en vertical: secuencia recortada 720×1076 a resolución nativa (sin reescalar el ancho)
+    portraitSet = W.innerHeight > W.innerWidth && W.innerWidth < 900;
+    var set = portraitSet ? film.getAttribute('data-m') : film.getAttribute('data-d');
     var loader = $('#loader'), loaderNum = loader && $('b', loader), loaderDone = false;
     var finishLoader = function () { if (loaderDone || !loader) return; loaderDone = true; loader.classList.add('done'); d.body.classList.add('ready'); };
     var src = function (i) { return set + String(i + 1).padStart(3, '0') + '.webp'; };
