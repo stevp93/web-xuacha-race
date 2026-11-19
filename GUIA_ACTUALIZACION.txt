@@ -28,7 +28,20 @@ git push
 - **Verificar estado**: Si quieres ver qué archivos has cambiado antes de subirlos, usa: `git status`
 
 
+# Desde la edición 2027
+
+- Las páginas públicas (index, recorrido, experiencia, info) se generan con
+  `python tools/generar_paginas.py`. Cambie los textos en ese archivo, no en el HTML.
+- Para cambiar la película de la portada: `tools/extraer_fotogramas.sh video.mp4`.
+- Antes de subir, revise que no queden archivos `.env` ni carpetas `node_modules`
+  (ya están en `.gitignore`).
+- Detalle completo en README.md; el sistema de cobro, en backend/README.md.
+
 # Cambios realizados:
 git add .
 git commit -m "feat: agregar nuevo patrocinador SALAS BIKE"
+git push origin main
+
+git add .
+git commit -m "feat(web): rediseño 2027 multipágina con portada animada por scroll"
 git push origin main
