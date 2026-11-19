@@ -1,1565 +1,179 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
-
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Google Analytics 4 (GA4) -->
-    <!-- IMPORTANTE: Reemplaza 'G-XXXXXXXXXX' con tu ID de medición de Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KH5PJ7J02K"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        // Configuración principal de GA4
-        gtag('config', 'G-KH5PJ7J02K', {
-            'send_page_view': true,
-            'anonymize_ip': false // Permite ver países/ciudades de origen
-        });
-
-        // Función para rastrear clics en botones de inscripción
-        function trackRegistrationClick(source) {
-            gtag('event', 'click_inscripcion', {
-                'event_category': 'engagement',
-                'event_label': source,
-                'value': 1
-            });
-        }
-
-        // Función para rastrear clics en WhatsApp
-        function trackWhatsAppClick(context) {
-            gtag('event', 'click_whatsapp', {
-                'event_category': 'contact',
-                'event_label': context,
-                'value': 1
-            });
-        }
-
-        // Función para rastrear visualización de secciones
-        function trackSectionView(section_name) {
-            gtag('event', 'view_section', {
-                'event_category': 'navigation',
-                'event_label': section_name,
-                'value': 1
-            });
-        }
-    </script>
-
-    <!-- Microsoft Clarity -->
-    <script type="text/javascript">
-        (function (c, l, a, r, i, t, y) {
-            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-        })(window, document, "clarity", "script", "vds0d9yltz");
-    </script>
-
-    <meta name="description"
-        content="XUACHA RACE 2026 - Desafía la montaña en la carrera de MTB más extrema de Soacha, Cundinamarca">
-    <title>XUACHA RACE 2026 - Carrera MTB Extrema</title>
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
-        rel="stylesheet">
-
-    <!-- FontAwesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <style>
-        /* Custom Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #0a0a0a;
-            color: #ffffff;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: 'Oswald', sans-serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        /* Pulse Animation */
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 20px rgba(255, 87, 34, 0.5);
-            }
-
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 40px rgba(255, 87, 34, 0.8);
-            }
-        }
-
-        .pulse-btn {
-            animation: pulse 2s infinite;
-        }
-
-        /* Gradient Text */
-        .gradient-text {
-            background: linear-gradient(135deg, #FF5722 0%, #76FF03 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Card Hover Effect */
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(118, 255, 3, 0.2);
-        }
-
-        /* Sponsor Logo Effect */
-        .sponsor-logo {
-            filter: grayscale(100%);
-            opacity: 0.6;
-            transition: all 0.3s ease;
-        }
-
-        .sponsor-logo:hover {
-            filter: grayscale(0%);
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        /* Hero Overlay */
-        .hero-overlay {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(255, 87, 34, 0.3) 100%);
-        }
-
-        /* Mobile Menu */
-        .mobile-menu {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .mobile-menu.active {
-            max-height: 500px;
-        }
-
-        /* Countdown Card Hover */
-        .countdown-card {
-            transition: all 0.3s ease;
-        }
-
-        .countdown-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(255, 87, 34, 0.2);
-            border-color: #FF5722;
-        }
-
-        /* Custom Animations */
-        @keyframes gradient-xy {
-
-            0%,
-            100% {
-                background-size: 400% 400%;
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .animate-gradient-xy {
-            animation: gradient-xy 15s ease infinite;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XUACHA RACE 2027 · Carrera MTB en Soacha</title>
+<meta name="description" content="Carrera de MTB en Soacha, Cundinamarca. Competencia de 40 km y travesía de 25 km.">
+<meta property="og:title" content="XUACHA RACE 2027 · Carrera MTB en Soacha">
+<meta property="og:description" content="Carrera de MTB en Soacha, Cundinamarca. Competencia de 40 km y travesía de 25 km.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#050505">
+<meta property="og:image" content="https://www.xuacharace.com/assets/img/scene-1.webp">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/oswald-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/site.css"><link rel="preload" href="assets/img/scene-1.webp" as="image" fetchpriority="high">
+<script>document.documentElement.classList.add('js')</script>
+<script src="assets/js/site.js" defer></script>
 </head>
-
-<body class="bg-black text-white">
-
-    <!-- NAVBAR -->
-    <nav class="fixed w-full top-0 z-50 bg-black/95 backdrop-blur-sm border-b border-gray-800">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <a href="#" class="flex items-center group">
-                    <video autoplay muted loop playsinline oncontextmenu="return false;"
-                        class="h-12 md:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
-                        <source src="assets/video/logo_xuacha.mp4" type="video/mp4">
-                        <img src="assets/img/logo.png" alt="XUACHA RACE">
-                    </video>
-                    <!-- Fallback Text if Image Missing -->
-                    <span class="gradient-text text-2xl md:text-3xl font-bold hidden">XUACHA RACE</span>
-                </a>
-
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#ruta" class="text-gray-300 hover:text-[#76FF03] transition">Ruta</a>
-                    <a href="#premiacion" class="text-gray-300 hover:text-[#76FF03] transition">Premiación</a>
-                    <a href="#kit" class="text-gray-300 hover:text-[#76FF03] transition">Kit</a>
-                    <a href="#contacto" class="text-gray-300 hover:text-[#76FF03] transition">Contacto</a>
-                    <button onclick="window.open(GOOGLE_FORM_URL, '_blank')"
-                        class="bg-[#FF5722] hover:bg-[#E64A19] px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105">
-                        INSCRIBIRME AHORA
-                    </button>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden text-3xl text-[#FF5722]">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-
-            <div id="mobile-menu" class="mobile-menu md:hidden">
-                <div class="flex flex-col space-y-4 mt-4 pb-4">
-                    <a href="#ruta" class="text-gray-300 hover:text-[#76FF03] transition py-2">Ruta</a>
-                    <a href="#premiacion" class="text-gray-300 hover:text-[#76FF03] transition py-2">Premiación</a>
-                    <a href="#kit" class="text-gray-300 hover:text-[#76FF03] transition py-2">Kit</a>
-                    <a href="#contacto" class="text-gray-300 hover:text-[#76FF03] transition py-2">Contacto</a>
-                    <button onclick="window.open(GOOGLE_FORM_URL, '_blank')"
-                        class="bg-[#FF5722] hover:bg-[#E64A19] px-6 py-3 rounded-lg font-semibold transition w-full">
-                        INSCRIBIRME AHORA
-                    </button>
-                </div>
-            </div>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+<div class="loader" id="loader" aria-hidden="true"><div><b>00</b><span>Cargando la montaña</span><i></i></div></div>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="XUACHA RACE, inicio">XUACHA <span>RACE</span></a>
+    <nav class="nav-links" aria-label="Principal"><a href="index.html" aria-current="page">Inicio</a><a href="recorrido.html">Recorrido</a><a href="experiencia.html">Experiencia</a><a href="info.html">Información</a></nav>
+    <a class="btn btn-primary btn-sm nav-cta" href="inscripcion.html" data-track="inscripcion_nav">Inscripción</a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú"><span></span></button>
+  </div>
+</header>
+<nav class="menu" id="menu" aria-label="Menú"><a href="index.html" aria-current="page"><small>01</small>Inicio</a><a href="recorrido.html"><small>02</small>Recorrido</a><a href="experiencia.html"><small>03</small>Experiencia</a><a href="info.html"><small>04</small>Información</a><a class="btn btn-primary" href="inscripcion.html" data-track="inscripcion_menu">Inscripción <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></nav>
+<main id="main" tabindex="-1">
+<section class="film" id="film" data-frames="121" data-d="assets/film/d/" data-m="assets/film/m/" aria-label="Presentación">
+  <div class="film-stage">
+    <img class="poster" src="assets/img/scene-1.webp" alt="" width="1920" height="1074" fetchpriority="high">
+    <canvas aria-hidden="true"></canvas>
+    <div class="shade"></div>
+    <div class="copy">
+      <div class="beat" data-a="0" data-b="0.2" style="--o:1">
+        <h1 class="title"><span>Xuacha</span><span class="outline">Race</span></h1>
+      </div>
+      <div class="beat" data-a="0.24" data-b="0.42" aria-hidden="true"><p class="say"><small>Xuacha</small>No se<br><span class="o">pedalea</span></p></div><div class="beat" data-a="0.46" data-b="0.64" aria-hidden="true"><p class="say"><small>Xuacha</small>Se<br><span class="outline">conquista</span></p></div><div class="beat" data-a="0.68" data-b="0.8" aria-hidden="true"><p class="say"><small>Dos distancias · una montaña</small>40 <span class="o">·</span> 25<br><span class="l">KM</span></p></div>
+      <div class="beat final" data-a="0.84" data-b="1" data-keep>
+        <h2>La montaña<br><span class="o">te espera</span></h2>
+        <p>Carrera de MTB en Soacha, Cundinamarca. Single track, ascensos largos y el sur de la sabana en una sola jornada.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="inscripcion.html" data-track="inscripcion_hero">Quiero correr <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn-ghost" href="recorrido.html">Ver el recorrido</a>
         </div>
-    </nav>
-
-    <!-- HERO SECTION -->
-    <section class="relative h-screen flex items-center justify-center overflow-hidden">
-        <!-- Background Image -->
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?q=80&w=2070" alt="Mountain Bike Race"
-                class="w-full h-full object-cover">
-            <div class="absolute inset-0 hero-overlay"></div>
-        </div>
-
-        <!-- Content -->
-        <div class="relative z-10 text-center px-4 max-w-5xl">
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-4 tracking-wider">
-                XUACHA <span class="text-[#FF5722]">RACE</span>
-            </h1>
-            <p class="text-xl md:text-3xl mb-8 text-gray-300">
-                Xuacha No Se Pedalea, Se Conquista - <span class="text-[#76FF03]">2026</span>
-            </p>
-
-            <!-- Countdown Timer -->
-            <div class="grid grid-cols-4 gap-4 max-w-2xl mx-auto mb-12">
-                <div
-                    class="bg-black/70 backdrop-blur-sm p-4 rounded-lg border border-[#FF5722]/30 countdown-card group">
-                    <div id="days"
-                        class="text-3xl md:text-5xl font-bold text-[#FF5722] group-hover:scale-110 transition-transform">
-                        00</div>
-                    <div class="text-xs md:text-sm text-gray-400 mt-1">DÍAS</div>
-                </div>
-                <div
-                    class="bg-black/70 backdrop-blur-sm p-4 rounded-lg border border-[#FF5722]/30 countdown-card group">
-                    <div id="hours"
-                        class="text-3xl md:text-5xl font-bold text-[#FF5722] group-hover:scale-110 transition-transform">
-                        00</div>
-                    <div class="text-xs md:text-sm text-gray-400 mt-1">HORAS</div>
-                </div>
-                <div
-                    class="bg-black/70 backdrop-blur-sm p-4 rounded-lg border border-[#76FF03]/30 countdown-card group">
-                    <div id="minutes"
-                        class="text-3xl md:text-5xl font-bold text-[#76FF03] group-hover:scale-110 transition-transform">
-                        00</div>
-                    <div class="text-xs md:text-sm text-gray-400 mt-1">MINUTOS</div>
-                </div>
-                <div
-                    class="bg-black/70 backdrop-blur-sm p-4 rounded-lg border border-[#76FF03]/30 countdown-card group">
-                    <div id="seconds"
-                        class="text-3xl md:text-5xl font-bold text-[#76FF03] group-hover:scale-110 transition-transform">
-                        00</div>
-                    <div class="text-xs md:text-sm text-gray-400 mt-1">SEGUNDOS</div>
-                </div>
-            </div>
-
-            <!-- CTA Button -->
-            <button onclick="trackRegistrationClick('hero_cta'); window.open(GOOGLE_FORM_URL, '_blank')"
-                class="pulse-btn bg-[#FF5722] hover:bg-[#E64A19] text-white px-12 py-5 rounded-full text-xl font-bold transition inline-flex items-center space-x-3">
-                <span>INSCRÍBETE AHORA</span>
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        </div>
-
-        <!-- Scroll Indicator -->
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
-            <div class="animate-bounce">
-                <i class="fas fa-chevron-down text-3xl text-[#76FF03]"></i>
-            </div>
-        </div>
-    </section>
-
-    <!-- INFO & STATS SECTION -->
-    <section class="py-16 bg-gradient-to-b from-black to-gray-900">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <!-- Date -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#FF5722] mb-4">
-                        <i class="far fa-calendar-alt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">FECHA</h3>
-                    <p class="text-gray-400">Domingo, 19 de Abril 2026</p>
-                    <p class="text-sm text-gray-500 mt-2">Salida: 7:00 AM</p>
-                </div>
-
-                <!-- Location -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#76FF03] mb-4">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">UBICACIÓN</h3>
-                    <a href="https://maps.app.goo.gl/X3mqiQ79FsT1rPMZA" target="_blank" rel="noopener noreferrer"
-                        class="text-gray-400 hover:text-[#76FF03] transition block">Parque Cagua, Soacha</a>
-                    <p class="text-sm text-gray-500 mt-2">Cundinamarca, Colombia</p>
-                </div>
-
-                <!-- Categories -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#FF5722] mb-4">
-                        <i class="fas fa-mountain"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">CATEGORÍAS</h3>
-                    <p class="text-gray-400">40km (Competencia)</p>
-                    <p class="text-gray-400">25km (Travesía)</p>
-                    <p class="text-sm text-gray-500 mt-2">Dos niveles de desafío</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ROUTE SECTION -->
-    <section id="ruta" class="py-20 bg-gray-900">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl md:text-6xl font-bold text-center mb-4">
-                LA <span class="text-[#76FF03]">RUTA</span>
-            </h2>
-            <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-                Un recorrido técnico y exigente que pondrá a prueba tu resistencia y habilidad
-            </p>
-
-            <!-- Categories Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
-                <!-- 40km Advanced Category -->
-                <div
-                    class="bg-gradient-to-br from-[#FF5722]/20 to-[#FF5722]/5 p-8 rounded-xl border-2 border-[#FF5722] card-hover">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-3xl font-bold text-[#FF5722]">40KM</h3>
-                        <div class="bg-[#FF5722] px-4 py-2 rounded-full">
-                            <span class="text-sm font-bold">COMPETENCIA</span>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-route text-xl text-[#FF5722]"></i>
-                            <div>
-                                <p class="text-sm text-gray-400">Distancia</p>
-                                <p class="font-bold text-lg">40 kilómetros</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-chart-line text-xl text-[#FF5722]"></i>
-                            <div>
-                                <p class="text-sm text-gray-400">Desnivel</p>
-                                <p class="font-bold text-lg">1,500 metros</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-clock text-xl text-[#FF5722]"></i>
-                            <div>
-                                <p class="text-sm text-gray-400">Tiempo Est.</p>
-                                <p class="font-bold text-lg">3-4 horas</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-mountain text-xl text-[#FF5722]"></i>
-                            <div>
-                                <p class="text-sm text-gray-400">Nivel</p>
-                                <p class="font-bold text-lg">Alta Exigencia</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 25km Intermediate Category -->
-                <div
-                    class="bg-gradient-to-br from-[#76FF03]/20 to-[#76FF03]/5 p-8 rounded-xl border-2 border-[#76FF03] card-hover">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-3xl font-bold text-[#76FF03]">25KM</h3>
-                        <div class="bg-[#76FF03] px-4 py-2 rounded-full">
-                            <span class="text-sm font-bold text-black">TRAVESIA</span>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-route text-xl text-[#76FF03]"></i>
-                            <div>
-                                <p class="text-sm text-gray-400">Distancia</p>
-                                <p class="font-bold text-lg">25 kilómetros</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-chart-line text-xl text-[#76FF03]"></i>
-                            <div>
-                                <p class="text-sm text-gray-400">Desnivel</p>
-                                <p class="font-bold text-lg">900 metros</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-clock text-xl text-[#76FF03]"></i>
-                            <div>
-                                <p class="text-sm text-gray-400">Tiempo Est.</p>
-                                <p class="font-bold text-lg">2-3 horas</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-hiking text-xl text-[#76FF03]"></i>
-                            <div>
-                                <p class="text-sm text-gray-400">Nivel</p>
-                                <p class="font-bold text-lg">Exigencia Media</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-                <!-- Text Content -->
-                <div>
-                    <div class="space-y-6">
-                        <div
-                            class="bg-gradient-to-r from-[#FF5722]/20 to-[#76FF03]/20 p-6 rounded-xl border border-[#76FF03]/30">
-                            <h3 class="text-xl font-bold mb-4 flex items-center">
-                                <i class="fas fa-info-circle text-[#76FF03] mr-3"></i>
-                                Características del Recorrido
-                            </h3>
-                            <div class="space-y-3 text-gray-300">
-                                <p><strong class="text-white">Terreno:</strong> 60% Single Track, 30% Camino Rural, 10%
-                                    Asfalto</p>
-                                <p><strong class="text-white">Punto de Partida:</strong> <a
-                                        href="https://maps.app.goo.gl/X3mqiQ79FsT1rPMZA" target="_blank"
-                                        rel="noopener noreferrer" class="text-[#76FF03] hover:underline">Parque Cagua,
-                                        Soacha</a></p>
-                                <p><strong class="text-white">Cronometraje:</strong> Sistema electrónico profesional</p>
-                                <p><strong class="text-white">Hidratación:</strong> Puntos estratégicos en el recorrido
-                                </p>
-                            </div>
-                        </div>
-
-                        <div
-                            class="bg-gradient-to-r from-[#76FF03]/20 to-[#FF5722]/20 p-6 rounded-xl border border-[#FF5722]/30">
-                            <h3 class="text-xl font-bold mb-4 flex items-center">
-                                <i class="fas fa-shield-alt text-[#FF5722] mr-3"></i>
-                                Seguridad y Soporte
-                            </h3>
-                            <div class="space-y-3 text-gray-300">
-                                <p><i class="fas fa-check text-[#76FF03] mr-2"></i>Personal médico en ruta</p>
-                                <p><i class="fas fa-check text-[#76FF03] mr-2"></i>Carro escoba</p>
-                                <p><i class="fas fa-check text-[#76FF03] mr-2"></i>Señalización </p>
-                                <p><i class="fas fa-check text-[#76FF03] mr-2"></i>Seguro de accidentes incluido</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Map/Altimetry Placeholder -->
-                <div class="relative">
-                    <div class="bg-gray-800 rounded-xl overflow-hidden border-2 border-[#76FF03]/30 shadow-2xl">
-                        <img src="assets/img/sponsors/perfil.JPG" alt="Perfil" class="w-full h-96 object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-                            <div>
-                                <h4 class="text-2xl font-bold mb-2">Perfil de Elevación</h4>
-                                <p class="text-gray-300">Ruta técnica con múltiples sectores de alta exigencia</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PREMIACION SECTION -->
-    <section id="premiacion" class="py-20 bg-black">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl md:text-6xl font-bold text-center mb-4">
-                PREMIACIÓN <span class="text-[#76FF03]">MODALIDAD COMPETENCIA 40KM</span>
-            </h2>
-            <p class="text-center text-gray-400 mb-4 max-w-3xl mx-auto">
-                Premiación en efectivo para los primeros tres lugares de cada categoría
-            </p>
-            <div class="bg-[#FF5722]/20 border border-[#FF5722] rounded-lg p-4 mb-12 max-w-4xl mx-auto">
-                <p class="text-center text-white text-sm md:text-base">
-                    <i class="fas fa-exclamation-circle text-[#FF5722] mr-2"></i>
-                    <strong>IMPORTANTE:</strong> La premiación en efectivo está condicionada a un mínimo de <strong>15
-                        inscritos por categoría</strong>.
-                    De lo contrario, la premiación será en obsequios.
-                </p>
-            </div>
-
-            <!-- Premiacion Table Container -->
-            <div class="max-w-6xl mx-auto">
-                <div
-                    class="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm rounded-2xl border border-[#76FF03]/30 overflow-hidden shadow-[0_0_40px_rgba(118,255,3,0.15)]">
-                    <!-- Table Header -->
-                    <div class="bg-gradient-to-r from-[#FF5722] to-[#76FF03] p-1">
-                        <div class="bg-black px-6 py-4">
-                            <h3 class="text-2xl md:text-3xl font-bold text-center gradient-text">
-                                TABLA DE PREMIACIÓN POR CATEGORÍA
-                            </h3>
-                        </div>
-                    </div>
-
-                    <!-- Responsive Table Wrapper -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="border-b border-gray-800">
-                                    <th class="px-6 py-5 text-lg md:text-xl font-bold text-[#76FF03]">CATEGORÍA</th>
-                                    <th class="px-6 py-5 text-lg md:text-xl font-bold text-center text-[#FFD700]">
-                                        <i class="fas fa-trophy mr-2"></i>PRIMERO
-                                    </th>
-                                    <th class="px-6 py-5 text-lg md:text-xl font-bold text-center text-[#C0C0C0]">
-                                        <i class="fas fa-medal mr-2"></i>SEGUNDO
-                                    </th>
-                                    <th class="px-6 py-5 text-lg md:text-xl font-bold text-center text-[#CD7F32]">
-                                        <i class="fas fa-award mr-2"></i>TERCERO
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- OPEN FEMENINO -->
-                                <tr
-                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#FF5722]/10 hover:to-[#76FF03]/10 transition-all duration-300">
-                                    <td class="px-6 py-5 font-semibold text-white">
-                                        <i class="fas fa-female text-[#FF5722] mr-2"></i>OPEN FEMENINO
-                                        <span class="block text-sm text-gray-400 mt-1">(18 - 29 años)</span>
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
-                                        $300,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
-                                        $200,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
-                                        $100,000
-                                    </td>
-                                </tr>
-
-                                <!-- MASTER A FEMENINO -->
-                                <tr
-                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#76FF03]/10 hover:to-[#FF5722]/10 transition-all duration-300">
-                                    <td class="px-6 py-5 font-semibold text-white">
-                                        <i class="fas fa-female text-[#76FF03] mr-2"></i>MASTER A FEMENINO
-                                        <span class="block text-sm text-gray-400 mt-1">(30 años en adelante)</span>
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
-                                        $300,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
-                                        $200,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
-                                        $100,000
-                                    </td>
-                                </tr>
-
-                                <!-- OPEN MASCULINO -->
-                                <tr
-                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#FF5722]/10 hover:to-[#76FF03]/10 transition-all duration-300">
-                                    <td class="px-6 py-5 font-semibold text-white">
-                                        <i class="fas fa-male text-[#FF5722] mr-2"></i>OPEN MASCULINO
-                                        <span class="block text-sm text-gray-400 mt-1">(18 - 29 años)</span>
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
-                                        $300,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
-                                        $200,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
-                                        $100,000
-                                    </td>
-                                </tr>
-
-                                <!-- MASTER A MASCULINO -->
-                                <tr
-                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#76FF03]/10 hover:to-[#FF5722]/10 transition-all duration-300">
-                                    <td class="px-6 py-5 font-semibold text-white">
-                                        <i class="fas fa-male text-[#76FF03] mr-2"></i>MASTER A MASCULINO
-                                        <span class="block text-sm text-gray-400 mt-1">(30 - 39 años)</span>
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
-                                        $300,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
-                                        $200,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
-                                        $100,000
-                                    </td>
-                                </tr>
-
-                                <!-- MASTER B MASCULINO -->
-                                <tr
-                                    class="border-b border-gray-800/50 hover:bg-gradient-to-r hover:from-[#FF5722]/10 hover:to-[#76FF03]/10 transition-all duration-300">
-                                    <td class="px-6 py-5 font-semibold text-white">
-                                        <i class="fas fa-male text-[#FF5722] mr-2"></i>MASTER B MASCULINO
-                                        <span class="block text-sm text-gray-400 mt-1">(40 - 49 años)</span>
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
-                                        $300,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
-                                        $200,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
-                                        $100,000
-                                    </td>
-                                </tr>
-
-                                <!-- MASTER C MASCULINO -->
-                                <tr
-                                    class="hover:bg-gradient-to-r hover:from-[#76FF03]/10 hover:to-[#FF5722]/10 transition-all duration-300">
-                                    <td class="px-6 py-5 font-semibold text-white">
-                                        <i class="fas fa-male text-[#76FF03] mr-2"></i>MASTER C MASCULINO
-                                        <span class="block text-sm text-gray-400 mt-1">(50 años en adelante)</span>
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#FFD700]">
-                                        $300,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#C0C0C0]">
-                                        $200,000
-                                    </td>
-                                    <td class="px-6 py-5 text-center text-xl md:text-2xl font-bold text-[#CD7F32]">
-                                        $100,000
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Prize Info Footer -->
-                    <div class="bg-gradient-to-r from-[#FF5722]/20 to-[#76FF03]/20 px-6 py-4 border-t border-gray-800">
-                        <div
-                            class="flex flex-wrap items-center justify-center gap-4 text-sm md:text-base text-gray-300">
-                            <div class="flex items-center">
-                                <i class="fas fa-info-circle text-[#76FF03] mr-2"></i>
-                                <span>Premiación inmediata después de la ceremonia</span>
-                            </div>
-                            <div class="hidden md:block text-gray-600">|</div>
-                            <div class="flex items-center">
-                                <i class="fas fa-hand-holding-usd text-[#FF5722] mr-2"></i>
-                                <span>Premios en efectivo</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Additional Info Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                    <div
-                        class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700 card-hover text-center">
-                        <div class="text-4xl text-[#FFD700] mb-3">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <h4 class="font-bold text-lg mb-2">Total en Premios</h4>
-                        <p class="text-2xl font-bold gradient-text">$3,600,000</p>
-                        <p class="text-sm text-gray-400 mt-2">Distribuidos en 6 categorías</p>
-                    </div>
-
-                    <div
-                        class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700 card-hover text-center">
-                        <div class="text-4xl text-[#76FF03] mb-3">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h4 class="font-bold text-lg mb-2">6 Categorías</h4>
-                        <p class="text-gray-300 text-sm">Open y Master</p>
-                        <p class="text-sm text-gray-400 mt-2">Masculino y Femenino</p>
-                    </div>
-
-                    <div
-                        class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl border border-gray-700 card-hover text-center">
-                        <div class="text-4xl text-[#FF5722] mb-3">
-                            <i class="fas fa-medal"></i>
-                        </div>
-                        <h4 class="font-bold text-lg mb-2">Podio Completo</h4>
-                        <p class="text-gray-300 text-sm">3 lugares premiados</p>
-                        <p class="text-sm text-gray-400 mt-2">En cada categoría</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PREMIACION TRAVESIA SECTION -->
-    <section class="py-16 bg-gradient-to-b from-black to-gray-900">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-5xl font-bold text-center mb-4">
-                PREMIACIÓN <span class="text-[#76FF03]">MODALIDAD TRAVESÍA 25KM</span>
-            </h2>
-            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
-                Reconocimiento para los primeros lugares - Premiación en obsequios
-            </p>
-
-            <div class="max-w-4xl mx-auto">
-                <div
-                    class="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm rounded-2xl border border-[#76FF03]/30 overflow-hidden shadow-[0_0_40px_rgba(118,255,3,0.15)]">
-                    <div class="p-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <!-- Masculino -->
-                            <div class="bg-gray-800/50 p-6 rounded-xl border border-[#FF5722]/30">
-                                <div class="text-center mb-6">
-                                    <i class="fas fa-male text-5xl text-[#FF5722] mb-3"></i>
-                                    <h3 class="text-2xl font-bold text-white">MASCULINO</h3>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="flex items-center justify-between p-3 bg-black/50 rounded-lg">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-trophy text-2xl text-[#FFD700] mr-3"></i>
-                                            <span class="font-bold">1er Lugar</span>
-                                        </div>
-                                        <span class="text-[#76FF03] font-semibold">Obsequio</span>
-                                    </div>
-                                    <div class="flex items-center justify-between p-3 bg-black/50 rounded-lg">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-medal text-2xl text-[#C0C0C0] mr-3"></i>
-                                            <span class="font-bold">2do Lugar</span>
-                                        </div>
-                                        <span class="text-[#76FF03] font-semibold">Obsequio</span>
-                                    </div>
-                                    <div class="flex items-center justify-between p-3 bg-black/50 rounded-lg">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-award text-2xl text-[#CD7F32] mr-3"></i>
-                                            <span class="font-bold">3er Lugar</span>
-                                        </div>
-                                        <span class="text-[#76FF03] font-semibold">Obsequio</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Femenino -->
-                            <div class="bg-gray-800/50 p-6 rounded-xl border border-[#76FF03]/30">
-                                <div class="text-center mb-6">
-                                    <i class="fas fa-female text-5xl text-[#76FF03] mb-3"></i>
-                                    <h3 class="text-2xl font-bold text-white">FEMENINO</h3>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="flex items-center justify-between p-3 bg-black/50 rounded-lg">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-trophy text-2xl text-[#FFD700] mr-3"></i>
-                                            <span class="font-bold">1er Lugar</span>
-                                        </div>
-                                        <span class="text-[#FF5722] font-semibold">Obsequio</span>
-                                    </div>
-                                    <div class="flex items-center justify-between p-3 bg-black/50 rounded-lg">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-medal text-2xl text-[#C0C0C0] mr-3"></i>
-                                            <span class="font-bold">2do Lugar</span>
-                                        </div>
-                                        <span class="text-[#FF5722] font-semibold">Obsequio</span>
-                                    </div>
-                                    <div class="flex items-center justify-between p-3 bg-black/50 rounded-lg">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-award text-2xl text-[#CD7F32] mr-3"></i>
-                                            <span class="font-bold">3er Lugar</span>
-                                        </div>
-                                        <span class="text-[#FF5722] font-semibold">Obsequio</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Info Note -->
-                        <div class="mt-8 bg-[#76FF03]/10 border border-[#76FF03]/30 rounded-lg p-4">
-                            <p class="text-center text-gray-300 text-sm">
-                                <i class="fas fa-gift text-[#76FF03] mr-2"></i>
-                                La premiación de la modalidad Travesía consiste en productos y obsequios de nuestros
-                                patrocinadores
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- KIT SECTION -->
-    <section id="kit" class="py-20 bg-gradient-to-b from-gray-900 to-black">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl md:text-6xl font-bold text-center mb-4">
-                TU INSCRIPCIÓN <span class="text-[#76FF03]">INCLUYE</span>
-            </h2>
-            <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-                Todo lo necesario para vivir una experiencia inolvidable y segura
-            </p>
-
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-                <!-- Número -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#FF5722] mb-3">
-                        <i class="fas fa-hashtag"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Número</h3>
-                    <p class="text-gray-400 text-sm">Número de competidor oficial</p>
-                </div>
-
-                <!-- Medalla -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#76FF03] mb-3">
-                        <i class="fas fa-medal"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Medalla</h3>
-                    <p class="text-gray-400 text-sm">Medalla finisher</p>
-                </div>
-
-                <!-- Marcación de Ruta -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#FF5722] mb-3">
-                        <i class="fas fa-map-signs"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Marcación de Ruta</h3>
-                    <p class="text-gray-400 text-sm">Señalización completa del recorrido</p>
-                </div>
-
-                <!-- Hidratación -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#76FF03] mb-3">
-                        <i class="fas fa-tint"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Hidratación</h3>
-                    <p class="text-gray-400 text-sm">Puntos de hidratación en ruta</p>
-                </div>
-
-                <!-- Almuerzo -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#FF5722] mb-3">
-                        <i class="fas fa-utensils"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Almuerzo</h3>
-                    <p class="text-gray-400 text-sm">Almuerzo post-carrera</p>
-                </div>
-
-                <!-- Asistencia Mecánica -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#76FF03] mb-3">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Asistencia Mecánica</h3>
-                    <p class="text-gray-400 text-sm">Soporte técnico en ruta</p>
-                </div>
-
-                <!-- Seguro de Accidentes -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#FF5722] mb-3">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Seguro de Accidentes</h3>
-                    <p class="text-gray-400 text-sm">Cobertura durante la competencia</p>
-                </div>
-
-                <!-- Rifas -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#76FF03] mb-3">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Rifas</h3>
-                    <p class="text-gray-400 text-sm">Participa por premios sorpresa</p>
-                </div>
-
-                <!-- Carro Escoba -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#FF5722] mb-3">
-                        <i class="fas fa-truck-pickup"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Carro Escoba</h3>
-                    <p class="text-gray-400 text-sm">Vehículo de apoyo en ruta</p>
-                </div>
-
-                <!-- Ambulancia -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#76FF03] mb-3">
-                        <i class="fas fa-ambulance"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Ambulancia</h3>
-                    <p class="text-gray-400 text-sm">Atención médica de emergencia</p>
-                </div>
-
-                <!-- Premiación -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#FF5722] mb-3">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Premiación</h3>
-                    <p class="text-gray-400 text-sm">Ceremonia de premiación oficial</p>
-                </div>
-
-                <!-- Fotografía -->
-                <div
-                    class="bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl text-center border border-gray-700 card-hover">
-                    <div class="text-5xl text-[#76FF03] mb-3">
-                        <i class="fas fa-camera"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Fotografía</h3>
-                    <p class="text-gray-400 text-sm">Fotos profesionales del evento</p>
-                </div>
-            </div>
-
-            <!-- Price CTA -->
-            <div
-                class="mt-16 text-center max-w-4xl mx-auto bg-gradient-to-r from-[#FF5722] to-[#76FF03] p-1 rounded-2xl">
-                <div class="bg-black p-8 rounded-xl">
-                    <p class="text-gray-400 mb-6 text-lg">PRECIO DE INSCRIPCIÓN</p>
-
-                    <!-- Precio Único Congelado -->
-                    <div class="max-w-md mx-auto mb-8">
-                        <div
-                            class="bg-gradient-to-br from-[#76FF03]/10 to-black border-2 border-[#76FF03] rounded-xl p-8 relative overflow-hidden">
-                            <div
-                                class="absolute top-4 right-4 bg-[#76FF03] text-black px-4 py-1 rounded-full text-sm font-bold animate-pulse">
-                                ¡PRECIO CONGELADO!
-                            </div>
-                            <div
-                                class="inline-block bg-[#FF5722] text-white px-4 py-1 rounded-full text-sm font-bold mb-4">
-                                PRECIO ÚNICO
-                            </div>
-                            <h3 class="text-5xl md:text-6xl font-bold mb-3">
-                                <span class="gradient-text">$110,000</span>
-                            </h3>
-                            <p class="text-gray-300 font-semibold mb-2">Precio congelado hasta el día del evento</p>
-                            <p class="text-sm text-gray-500 mt-2">Aplica para 40KM y 25KM</p>
-                            <div class="mt-4 bg-[#76FF03]/10 border border-[#76FF03]/30 rounded-lg p-3">
-                                <p class="text-sm text-gray-300"><i
-                                        class="fas fa-users text-[#76FF03] mr-2"></i>Descuentos solo para grupos de 10+
-                                    personas</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p class="text-gray-400 mb-6">¡Asegura tu cupo ahora!</p>
-                    <button onclick="trackRegistrationClick('pricing_cta'); window.open(GOOGLE_FORM_URL, '_blank')"
-                        class="bg-[#FF5722] hover:bg-[#E64A19] text-white px-12 py-5 rounded-full text-xl font-bold transition transform hover:scale-105">
-                        INSCRIBIRME YA
-                        <i class="fas fa-arrow-right ml-2"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- JERSEY SECTION (COMPRA ADICIONAL) -->
-    <section class="py-16 bg-black">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl md:text-5xl font-bold text-center mb-4">
-                <span class="text-[#FF5722]">JERSEY OFICIAL</span>
-            </h2>
-            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
-                Lleva el recuerdo de esta gran aventura con nuestro jersey oficial
-            </p>
-
-            <div class="max-w-2xl mx-auto">
-                <div
-                    class="bg-gradient-to-br from-[#FF5722]/20 to-[#76FF03]/20 p-8 rounded-2xl border-2 border-[#FF5722] relative overflow-hidden">
-                    <div
-                        class="absolute top-4 right-4 bg-[#FF5722] text-sm px-4 py-2 rounded-full font-bold animate-pulse z-10">
-                        COMPRA ADICIONAL
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-4">
-                        <div class="text-center md:text-left">
-                            <!-- Jersey Image -->
-                            <div class="mb-6 relative">
-                                <video
-                                    class="w-full max-w-xs md:max-w-sm mx-auto md:mx-0 rounded-xl shadow-2xl object-cover"
-                                    autoplay loop muted playsinline oncontextmenu="return false;"
-                                    poster="assets/img/sponsors/Jersey.png">
-                                    <source src="assets/video/Promo _jersey.mp4" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
-                            <h3 class="text-3xl font-bold mb-4">Jersey Técnico Oficial</h3>
-                            <p class="text-gray-300 mb-4">Soft Jersey sin cremallera marca <strong
-                                    class="text-[#76FF03]">ARCE BIKE</strong> con diseño exclusivo del evento
-                                XUACHA RACE 2026</p>
-                            <ul class="space-y-2 text-gray-400 mb-6">
-                                <li><i class="fas fa-check text-[#76FF03] mr-2"></i>Soft Jersey sin cremallera</li>
-                                <li><i class="fas fa-check text-[#76FF03] mr-2"></i>Secado rápido</li>
-                                <li><i class="fas fa-check text-[#76FF03] mr-2"></i>Diseño exclusivo XUACHA RACE 2026
-                                </li>
-                                <li><i class="fas fa-check text-[#76FF03] mr-2"></i>Disponible en todas las tallas</li>
-                            </ul>
-                        </div>
-
-                        <div class="text-center">
-                            <div class="bg-black/50 backdrop-blur-sm p-6 rounded-xl border border-[#76FF03]/30">
-                                <p class="text-gray-400 mb-2">Precio Especial</p>
-                                <p class="text-4xl md:text-5xl font-bold gradient-text mb-4">$120,000</p>
-                                <p class="text-sm text-gray-500 mb-3">*Disponible en todas las tallas*</p>
-                                <div class="bg-red-900/30 border border-red-500/50 rounded-lg p-3 mt-3">
-                                    <p class="text-red-300 text-xs font-semibold">
-                                        <i class="fas fa-exclamation-triangle mr-1"></i>Fecha límite de compra: 5 de
-                                        Abril 2026
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ORGANIZADORES SECTION -->
-    <section class="py-20 bg-black">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl md:text-6xl font-bold text-center mb-4">
-                <span class="text-[#76FF03]">ORGANIZADORES</span>
-            </h2>
-            <p class="text-center text-gray-400 mb-16">
-                El equipo que hace realidad este desafío extremo
-            </p>
-
-            <!-- Main Organizer - SP AUTOMATIZACIONES -->
-            <div class="max-w-3xl mx-auto mb-16">
-                <a href="https://www.instagram.com/sp930718/" target="_blank" rel="noopener noreferrer" class="block">
-                    <div
-                        class="bg-gradient-to-br from-[#FF5722]/30 to-[#76FF03]/30 p-2 rounded-2xl shadow-[0_0_50px_rgba(255,87,34,0.5)] hover:shadow-[0_0_70px_rgba(255,87,34,0.7)] transition-all duration-300 cursor-pointer">
-                        <div class="bg-black p-10 rounded-xl text-center">
-                            <div class="mb-6">
-                                </span>
-                            </div>
-                            <h3 class="text-3xl md:text-4xl font-bold mb-8 gradient-text">SP AUTOMATIZACIONES</h3>
-                            <div class="h-48 flex items-center justify-center overflow-hidden mb-6">
-                                <img src="assets/img/sponsors/splogo.png" alt="SP AUTOMATIZACIONES"
-                                    class="max-w-full max-h-full object-contain transform hover:scale-110 transition-transform duration-300"
-                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                                <div
-                                    class="hidden text-5xl font-bold bg-gradient-to-r from-[#FF5722] to-[#76FF03] bg-clip-text text-transparent">
-                                    SP AUTOMATIZACIONES
-                                </div>
-                            </div>
-                            <p class="text-gray-400 max-w-xl mx-auto">
-                                Somos tecnología con sello local. Estamos detrás de la arquitectura digital del Xuacha
-                                Race,
-                                facilitando procesos con inteligencia artificial para que nuestra comunidad deportiva en
-                                Soacha siga creciendo. Un proyecto que evoluciona de lo digital hacia el futuro
-                                industrial.
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Other Organizers -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <a href="https://www.instagram.com/julitoysusrutas/" target="_blank" rel="noopener noreferrer"
-                    class="bg-gray-900/80 backdrop-blur-sm p-6 rounded-xl border border-[#76FF03]/30 hover:border-[#76FF03] transition-all duration-300 card-hover text-center block cursor-pointer">
-                    <div class="h-32 flex items-center justify-center overflow-hidden mb-4">
-                        <img src="assets/img/sponsors/juliologo.png" alt="Julito y Sus Rutas"
-                            class="max-w-full max-h-full object-contain"
-                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span class="hidden text-2xl font-bold text-white">JULITO Y SUS RUTAS</span>
-                    </div>
-                    <h4 class="text-lg font-bold text-[#76FF03]">Julito y Sus Rutas</h4>
-                    <p class="text-gray-400 text-sm mt-2"> Julito y sus Rutas es un CIclista de Montaña Influenciador de
-                        Bogotá, conocedor de rutas de MTB a nivel Nacional y Promotor de Eventos de CIclismo MTB. </p>
-                </a>
-
-                <a href="https://www.instagram.com/capopaginaoficial/" target="_blank" rel="noopener noreferrer"
-                    class="bg-gray-900/80 backdrop-blur-sm p-6 rounded-xl border border-[#76FF03]/30 hover:border-[#76FF03] transition-all duration-300 card-hover text-center block cursor-pointer">
-                    <div class="h-32 flex items-center justify-center overflow-hidden mb-4">
-                        <img src="assets/img/sponsors/capo.png" alt="CAPO" class="max-w-full max-h-full object-contain"
-                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span class="hidden text-2xl font-bold text-white">CAPO</span>
-                    </div>
-                    <h4 class="text-lg font-bold text-[#76FF03]">Capo</h4>
-                    <p class="text-gray-400 text-sm mt-2">CAPO es una marca apasionada por el ciclismo de montaña.
-                        Creamos accesorios y ropa informal que reflejan la esencia y la adrenalina de la aventura en dos
-                        ruedas. Nuestros productos están diseñados para ciclomontañistas que buscan expresar su
-                        identidad y estilo en cada ruta. ¡Dale identidad a tu pasión!</p>
-                </a>
-
-                <a href="https://www.instagram.com/laabejitadelpanal.8a/" target="_blank" rel="noopener noreferrer"
-                    class="bg-gray-900/80 backdrop-blur-sm p-6 rounded-xl border border-[#76FF03]/30 hover:border-[#76FF03] transition-all duration-300 card-hover text-center block cursor-pointer">
-                    <div class="h-32 flex items-center justify-center overflow-hidden mb-4">
-                        <img src="assets/img/sponsors/abeja.jpeg" alt="Abejita Del Panal 8A"
-                            class="max-w-full max-h-full object-contain"
-                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span class="hidden text-2xl font-bold text-white">ABEJITA DEL PANAL 8A</span>
-                    </div>
-                    <h4 class="text-lg font-bold text-[#76FF03]">Abejita Del Panal 8A</h4>
-                    <p class="text-gray-400 text-sm mt-2">Marca colombiana artesanal de apicultores enfocada en la
-                        pureza y la salud *La calidad nos representa*</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- SPONSOR OFICIAL SECTION -->
-    <section class="py-20 bg-black relative overflow-hidden">
-        <!-- Decorative Background Glows -->
-        <div
-            class="absolute -top-48 -left-48 w-[500px] h-[500px] bg-[#76FF03]/10 rounded-full blur-[120px] pointer-events-none">
-        </div>
-        <div
-            class="absolute -bottom-48 -right-48 w-[500px] h-[500px] bg-[#FF5722]/10 rounded-full blur-[120px] pointer-events-none">
-        </div>
-
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="text-center mb-16">
-                <span
-                    class="text-[#FF5722] font-bold tracking-[0.4em] text-xs md:text-sm mb-4 block uppercase animate-pulse">
-                    Patrocinador Principal
-                </span>
-                <h2 class="text-5xl md:text-7xl font-bold tracking-tight">
-                    <span class="text-white">SPONSOR</span> <span class="gradient-text">OFICIAL</span>
-                </h2>
-                <div class="w-24 h-1.5 bg-gradient-to-r from-[#76FF03] to-[#FF5722] mx-auto mt-6 rounded-full"></div>
-            </div>
-
-            <div class="max-w-5xl mx-auto">
-                <div class="relative group">
-                    <!-- Premium Animated Outer Glow -->
-                    <div
-                        class="absolute -inset-1.5 bg-gradient-to-r from-[#76FF03] via-[#FF5722] to-[#76FF03] rounded-[3rem] blur-xl opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-300 animate-gradient-xy">
-                    </div>
-
-                    <div
-                        class="relative bg-zinc-900/60 backdrop-blur-2xl p-12 md:p-24 rounded-[3rem] border border-white/10 flex flex-col items-center justify-center shadow-2xl transition-all duration-700 hover:bg-zinc-900/40">
-                        <!-- Logo -Sponsor ELECTROLIT-  -->
-                        <a href="https://www.instagram.com/electrolit.colombia/" target="_blank"
-                            rel="noopener noreferrer"
-                            class="w-full max-w-3xl transform group-hover:scale-105 transition-all duration-700 ease-out cursor-pointer block">
-                            <img src="assets/img/sponsors/electrolit.png" alt="Electrolit Official Sponsor"
-                                class="w-full h-auto max-h-[300px] md:max-h-[350px] object-contain drop-shadow-[0_0_40px_rgba(255,255,255,0.15)] group-hover:drop-shadow-[0_0_60px_rgba(255,255,255,0.25)]">
-                        </a>
-
-                        <!-- Brand Statement -->
-                        <div class="mt-16 text-center">
-                            <h3 class="text-4xl md:text-5xl font-bold text-white mb-6 tracking-wide uppercase">
-                                ELECTROLIT</h3>
-                            <p
-                                class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-light italic">
-                                "La ciencia de la hidratación total para conquistar cada montaña en el <span
-                                    class="text-[#76FF03] font-semibold">XUACHA RACE 2026</span>"
-                            </p>
-
-                            <!--Separador Visual -->
-                            <div class="mt-10 flex justify-center items-center space-x-3">
-                                <div class="w-12 h-1 bg-[#76FF03] rounded-full opacity-50"></div>
-                                <div class="w-2 h-2 bg-white rounded-full animate-ping"></div>
-                                <div class="w-12 h-1 bg-[#FF5722] rounded-full opacity-50"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SPONSORS SECTION -->
-    <section class="py-20 bg-gray-900">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl md:text-6xl font-bold text-center mb-4">
-                NUESTROS <span class="text-[#FF5722]">PATROCINADORES</span>
-            </h2>
-            <p class="text-center text-gray-400 mb-16">
-                Marcas aliadas que apoyan el ciclismo de montaña
-            </p>
-
-            <!-- Sponsors Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
-                <!-- ARCE BIKE -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/ARCE.png" alt="ARCE BIKE"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">ARCE BIKE</span>
-                </div>
-
-                <!-- JESHUA -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/jesh.png" alt="JESHUA"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">JESHUA</span>
-                </div>
-
-                <!-- GLJ -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/GLJ.png" alt="GLJ"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">GLJ</span>
-                </div>
-
-                <!-- Trek -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/OLD.png" alt="OLD RIDERS"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">OLD RIDERS</span>
-                </div>
-
-                <!-- BICI-OSOS -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/LogoSonia.png" alt="BICI-OSOS"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">BICI-OSOS</span>
-                </div>
-
-                <!-- CICLISMO Y PUNTO -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/CyPBlack.png" alt="CICLISMO Y PUNTO"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">CICLISMO Y PUNTO</span>
-                </div>
-
-                <!-- ALMA EXTREMA -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/AlmaExtrema.png" alt="ALMA EXTREMA"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">ALMA EXTREMA</span>
-                </div>
-
-                <!-- BICLYCLE -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/Bicycle.png" alt="BICLYCLE"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">BICLYCLE</span>
-                </div>
-
-                <!-- Gelatina yovi-->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/yovi.png" alt=" GELATINAS YOVI"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">GELATINAS YOVI</span>
-                </div>
-
-
-                <!-- TROCHA Y BARRO  -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/trochaybarro.png" alt="TROCHA Y BARRO"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">TROCHA Y BARRO</span>
-                </div>
-
-                <!-- valientes ORG 1 -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/valientesorg.png" alt="VALIENTES ORG"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800"> VALIENTES ORG </span>
-                </div>
-
-
-                <!-- CANDELEROS-->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/CANDELEROS.png" alt="CANDELEROS"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">CANDELEROS</span>
-                </div>
-
-
-                <!-- PARCEROS SUR 3-->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/PARCEROS_SUR.png" alt="PARCEROS SUR"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">PARCEROS SUR</span>
-                </div>
-
-
-                <!-- ESPACIO RESERVADO PARA FUTURO PATROCINADOR 4 -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/J_BIKE_SPARTA.png" alt="J BIKE SPARTA"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">J BIKE SPARTA</span>
-                </div>
-
-
-                <!-- KEVIN BIKE -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/KEVIN_BIKE.png" alt="KEVIN BIKE"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">KEVIN BIKE</span>
-                </div>
-
-                <!-- PERFEC FOODS-->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/PERFEC_FOODS.png" alt="PERFEC FOODS"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">PERFEC FOODS</span>
-                </div>
-
-                <!-- RUTA DEL MANGO -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/RUTA_DEL_MANGO.png" alt="RUTA DEL MANGO"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">RUTA DEL MANGO</span>
-                </div>
-
-                <!-- SMAK -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/SMAK.png" alt="SMAK"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">SMAK</span>
-                </div>
-
-                <!-- VAMOS QUE VAMOS -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/VAMOS_QUE_VAMOS.png" alt="VAMOS QUE VAMOS"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">VAMOS QUE VAMOS</span>
-                </div>
-
-                <!-- SALAS BIKE -->
-                <div
-                    class="bg-white p-6 rounded-lg flex items-center justify-center h-32 hover:shadow-[0_0_20px_rgba(118,255,3,0.5)] transition-all duration-300 group">
-                    <img src="assets/img/sponsors/SALAS_BIKE.png" alt="SALAS BIKE"
-                        class="max-h-24 max-w-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                    <span class="hidden text-xl font-bold text-gray-800">SALAS BIKE</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer id="contacto" class="bg-black border-t border-gray-800 py-16">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-                <!-- Brand -->
-                <div>
-                    <h3 class="text-3xl font-bold mb-4">
-                        <span class="gradient-text">XUACHA RACE</span>
-                    </h3>
-                    <p class="text-gray-400 mb-6">
-                        La carrera de MTB más extrema de Soacha. Desafía la montaña y supera tus límites.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/xuacharace?igsh=aTg3N3F6aWZveGtp" target="_blank"
-                            rel="noopener noreferrer" class="text-3xl text-gray-400 hover:text-[#FF5722] transition">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="text-xl font-bold mb-4 text-[#76FF03]">Enlaces Rápidos</h4>
-                    <ul class="space-y-3">
-                        <li><a href="#ruta" class="text-gray-400 hover:text-white transition"><i
-                                    class="fas fa-chevron-right text-[#FF5722] mr-2"></i>La Ruta</a></li>
-                        <li><a href="#kit" class="text-gray-400 hover:text-white transition"><i
-                                    class="fas fa-chevron-right text-[#FF5722] mr-2"></i>Kit de Inscripción</a></li>
-                        <li>
-                            <a href="Documentos/LIBRO DE RUTA XR .pdf" target="_blank" download
-                                class="text-gray-400 hover:text-[#76FF03] transition flex items-center gap-2">
-                                <i class="fas fa-file-pdf text-[#FF5722]"></i>
-                                Libro de Ruta
-                                <span class="text-xs bg-[#FF5722]/20 text-[#FF5722] border border-[#FF5722]/40 px-2 py-0.5 rounded-full">PDF</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="Documentos/ReglamentoXR.pdf" target="_blank" download
-                                class="text-gray-400 hover:text-[#76FF03] transition flex items-center gap-2">
-                                <i class="fas fa-file-pdf text-[#FF5722]"></i>
-                                Reglamento
-                                <span class="text-xs bg-[#FF5722]/20 text-[#FF5722] border border-[#FF5722]/40 px-2 py-0.5 rounded-full">PDF</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Contact -->
-                <div>
-                    <h4 class="text-xl font-bold mb-4 text-[#76FF03]">Contacto</h4>
-                    <ul class="space-y-3">
-                        <li class="flex items-center text-gray-400">
-                            <i class="fab fa-whatsapp text-2xl text-[#25D366] mr-3"></i>
-                            <span>+57 323 933 5820</span>
-                        </li>
-                        <li class="flex items-center text-gray-400">
-                            <i class="fas fa-envelope text-2xl text-[#FF5722] mr-3"></i>
-                            <span>Xuacharace2026@gmail.com</span>
-                        </li>
-                        <li class="flex items-start text-gray-400">
-                            <i class="fas fa-map-marker-alt text-2xl text-[#76FF03] mr-3 mt-1"></i>
-                            <a href="https://maps.app.goo.gl/X3mqiQ79FsT1rPMZA" target="_blank"
-                                rel="noopener noreferrer" class="hover:text-[#76FF03] transition">
-                                <span>Parque Cagua, Soacha<br>Cundinamarca, Colombia</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="mt-6">
-                        <a href="https://wa.me/573239335820?text=Hola,%20quiero%20informacion%20sobre%20la%20el%20a%20XUACHA%20RACE"
-                            target="_blank" rel="noopener noreferrer" onclick="trackWhatsAppClick('footer_contact')"
-                            class="inline-flex items-center justify-center bg-[#76FF03] hover:bg-[#5ed600] text-black px-6 py-3 rounded-full text-sm font-bold transition transform hover:scale-105 w-full">
-                            <i class="fab fa-whatsapp mr-2"></i>CONTACTANOS
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Copyright -->
-            <div class="border-t border-gray-800 pt-8 text-center">
-                <p class="text-gray-400">
-                    © 2026 Xuacha Race. Todos los derechos reservados.
-                    <span class="text-[#76FF03]">Powered by SP Automatizaciones</span>
-                </p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript -->
-    <script>
-        // Configuration
-        const GOOGLE_FORM_URL = 'https://forms.gle/bBjtanqchuApDj8VA'; // Registration Form
-
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('active');
-            const icon = mobileMenuBtn.querySelector('i');
-            icon.classList.toggle('fa-bars');
-            icon.classList.toggle('fa-times');
-        });
-
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.remove('active');
-                const icon = mobileMenuBtn.querySelector('i');
-                icon.classList.add('fa-bars');
-                icon.classList.remove('fa-times');
-            });
-        });
-
-        // Countdown Timer
-        // Target date: April 19, 2026 at 07:00 AM
-        const raceDate = new Date('2026-04-19T07:00:00').getTime();
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = raceDate - now;
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById('days').textContent = String(days).padStart(2, '0');
-            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-
-            if (distance < 0) {
-                document.getElementById('days').textContent = '00';
-                document.getElementById('hours').textContent = '00';
-                document.getElementById('minutes').textContent = '00';
-                document.getElementById('seconds').textContent = '00';
-            }
-        }
-
-        // Update countdown every second
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
-
-        // Smooth Scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const offsetTop = target.offsetTop - 80; // Account for fixed navbar
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Navbar background on scroll
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 100) {
-                nav.style.backgroundColor = 'rgba(0, 0, 0, 0.98)';
-            } else {
-                nav.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
-            }
-        });
-    </script>
+      </div>
+    </div>
+    <div class="hud" aria-hidden="true">
+      <div class="km">Distancia<b><span id="km">00.0</span><i>KM</i></b></div>
+      <div class="track"></div>
+      <div class="hint">Desliza</div>
+    </div>
+  </div>
+</section>
+
+<div class="tapes" aria-hidden="true">
+  <div class="tape a"><div><span>Xuacha no se pedalea</span><span>Se conquista</span><span>Edición 2027</span><span>Soacha</span><span>Xuacha no se pedalea</span><span>Se conquista</span><span>Edición 2027</span><span>Soacha</span><span>Xuacha no se pedalea</span><span>Se conquista</span><span>Edición 2027</span><span>Soacha</span><span>Xuacha no se pedalea</span><span>Se conquista</span><span>Edición 2027</span><span>Soacha</span></div></div>
+  <div class="tape b"><div><span>Single track</span><span>40 km</span><span>Montaña</span><span>25 km</span><span>Comunidad MTB</span><span>Single track</span><span>40 km</span><span>Montaña</span><span>25 km</span><span>Comunidad MTB</span><span>Single track</span><span>40 km</span><span>Montaña</span><span>25 km</span><span>Comunidad MTB</span><span>Single track</span><span>40 km</span><span>Montaña</span><span>25 km</span><span>Comunidad MTB</span></div></div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <span class="eyebrow rv">Manifiesto</span>
+    <p class="manifesto">Aquí no hay atajos. Hay <em>ascensos largos</em>, sendero angosto, polvo en la cara y una cima que se gana a pulso. Al final no importa el tiempo: importa que <strong>llegaste</strong>.</p>
+  </div>
+</section>
+
+<section class="hscroll" aria-label="Las rutas">
+  <div class="pin">
+    <div class="lbl"><span class="eyebrow" style="margin:0">Las rutas</span><b data-hcount>01 / 05</b></div>
+    <div class="row">
+      <article class="panel">
+        <img src="assets/img/scene-1.webp" alt="Ciclista en un sendero de cresta al atardecer" width="1920" height="1074" loading="lazy">
+        <span class="big o" aria-hidden="true">40</span>
+        <h3>Competencia 40 km</h3>
+        <p>Alta exigencia. Ascensos largos, bajadas técnicas y seis categorías por edad.</p>
+        <a class="btn btn-ghost btn-sm more" href="recorrido.html#40k">Ver la ruta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="panel">
+        <img src="assets/img/scene-2.webp" alt="Sendero de montaña entre crestas y polvo dorado" width="1920" height="1074" loading="lazy">
+        <span class="big l" aria-hidden="true">25</span>
+        <h3>Travesía 25 km</h3>
+        <p>La misma montaña con menos kilómetros. Categorías femenina y masculina.</p>
+        <a class="btn btn-ghost btn-sm more" href="recorrido.html#25k">Ver la ruta <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
+      <article class="panel text">
+        <span class="num">60<small style="color:#120400">%</small></span>
+        <div><h3>Single track</h3><p>Del recorrido de 40 km en la edición 2026. Sendero de verdad, no carretera.</p></div>
+      </article>
+      <article class="panel">
+        <img src="assets/img/scene-3.webp" alt="Panorama de cordillera con nevados al fondo" width="1920" height="1074" loading="lazy">
+        <h3>Parque Cagua</h3>
+        <p>Salida y meta en Soacha. Al sur de la sabana, donde empieza la montaña.</p>
+        <a class="btn btn-ghost btn-sm more" href="https://maps.app.goo.gl/X3mqiQ79FsT1rPMZA" rel="noopener">Abrir mapa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      </article>
+      <article class="panel text lime">
+        <span class="num">8</span>
+        <div><h3>Categorías</h3><p>Entre las dos distancias, para mujeres y hombres.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="head"><span class="eyebrow rv">Edición 2026 en cifras</span><h2 class="h2 split"><span class="line"><span>Lo que se</span></span><span class="line"><span class="o">vivió</span></span></h2></div>
+    <div class="figures">
+      <div class="fig rv"><span class="num" data-count="40">40<small>KM</small></span><p>De competencia, de principio a fin en montaña.</p></div>
+      <div class="fig rv" style="--d:1"><span class="num" data-count="1500">1500<small>M+</small></span><p>De desnivel positivo en la ruta larga.</p></div>
+      <div class="fig rv" style="--d:2"><span class="num" data-count="60">60<small>%</small></span><p>Del recorrido largo por single track.</p></div>
+      <div class="fig rv" style="--d:3"><span class="num" data-count="8">8</span><p>Categorías entre las dos distancias.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="head"><span class="eyebrow rv">Inscripción</span><h2 class="h2 split"><span class="line"><span>Tres pasos</span></span><span class="line"><span>y <span class="l">a rodar</span></span></span></h2>
+    <p class="lead rv">Sin crear cuenta ni contraseña. Tu avance queda guardado y lo retomas desde el enlace que llega a tu WhatsApp.</p></div>
+    <div class="steps">
+      <article class="step rv"><b>01</b><h3>Tus datos</h3><p>Nombre, documento, correo y WhatsApp. Nada más para empezar.</p></article>
+      <article class="step rv"><b>02</b><h3>Tu carrera</h3><p>Eliges distancia y categoría. Si tienes un código de descuento, se aplica aquí.</p></article>
+      <article class="step rv"><b>03</b><h3>Tu pago</h3><p>Pago completo o reserva más saldo, sin intereses. Tarjeta, PSE o Nequi en la página segura de Wompi.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="maker">
+  <div class="band" aria-hidden="true"></div>
+  <div class="wrap">
+    <img class="logo rv" src="assets/img/spa/spa-logo-horizontal.svg" alt="SP Automatizaciones" width="293" height="64" loading="lazy">
+    <div class="rv" style="--d:1">
+      <span class="eyebrow">Tecnología del evento</span>
+      <h2>Inscripciones, pagos y avisos, automatizados</h2>
+      <p>La web, el sistema de cobro en cuotas y los recordatorios por WhatsApp de XUACHA RACE son desarrollo de SP Automatizaciones, agencia de automatización e inteligencia artificial de Soacha.</p>
+      <a class="btn btn-dark" href="https://stevp93.github.io/SP-AUTOMATIZACIONES-WEB" rel="noopener">Conocer SP Automatizaciones <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<section class="cta" style="isolation:isolate">
+  <img class="bgimg" data-par="-0.12" src="assets/img/scene-3.webp" alt="" width="1920" height="1074" loading="lazy">
+  <div class="wrap">
+    <span class="eyebrow rv">Edición 2027</span>
+    <h2 class="h2 split"><span class="line"><span>¿Subes</span></span><span class="line"><span class="outline">o miras?</span></span></h2>
+    <p class="lead rv">Fecha y valores por anunciar. Escríbenos y te avisamos primero.</p>
+    <div class="actions rv">
+      <a class="btn btn-primary" href="inscripcion.html" data-track="inscripcion_cta">Inscripción <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn-ghost" href="https://wa.me/573239335820?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20XUACHA%20RACE%202027" rel="noopener" data-track="whatsapp_cta">Avísame por WhatsApp</a>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="footer">
+  <div class="wrap">
+    <p class="giant" aria-hidden="true">Xuacha <span>Race</span></p>
+    <div class="top">
+      <div>
+        <p class="tagline">Xuacha no se pedalea, se conquista. Carrera de MTB en Soacha, Cundinamarca.</p>
+      </div>
+      <nav aria-label="Pie de página">
+        <a href="recorrido.html">Recorrido</a><a href="experiencia.html">Experiencia</a><a href="info.html">Información</a><a href="inscripcion.html">Inscripción</a>
+        <a href="https://wa.me/573239335820?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20XUACHA%20RACE%202027" rel="noopener">WhatsApp</a><a href="https://www.instagram.com/xuacharace" rel="noopener">Instagram</a>
+      </nav>
+    </div>
+    <div class="base">
+      <span>© 2027 XUACHA RACE</span>
+      <a class="made" href="https://stevp93.github.io/SP-AUTOMATIZACIONES-WEB" rel="noopener" aria-label="Desarrollado por SP Automatizaciones">
+        <span>Desarrollado por</span><img src="assets/img/spa/spa-logo-negativo-web.svg" alt="SP Automatizaciones" width="147" height="32" loading="lazy">
+      </a>
+    </div>
+  </div>
+</footer>
 </body>
-
 </html>
