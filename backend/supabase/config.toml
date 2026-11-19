@@ -1,0 +1,4 @@
+# La función "api" hace su propia autenticación (tokens de inscripción, firma de Wompi,
+# llaves internas), por eso no exige el JWT de Supabase.
+[functions.api]
+verify_jwt = false

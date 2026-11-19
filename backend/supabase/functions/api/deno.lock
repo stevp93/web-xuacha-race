@@ -1,0 +1,21 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:hono@4.6.14": "4.6.14",
+    "npm:postgres@3.4.5": "3.4.5"
+  },
+  "npm": {
+    "hono@4.6.14": {
+      "integrity": "sha512-j4VkyUp2xazGJ8eCCLN1Vm/bxdvm/j5ZuU9AIjLu9vapn2M44p9L3Ktr9Vnb2RN2QtcR/wVjZVMlT5k7GJQgPw=="
+    },
+    "postgres@3.4.5": {
+      "integrity": "sha512-cDWgoah1Gez9rN3H4165peY9qfpEo+SA61oQv65O3cRUE1pOEoJWwddwcqKE8XZYjbblOJlYDlLV4h67HrEVDg=="
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:hono@4.6.14",
+      "npm:postgres@3.4.5"
+    ]
+  }
+}

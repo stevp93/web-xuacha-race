@@ -1,0 +1,27 @@
+# Servidor de respaldo. Ejecutar desde backend/node:  docker compose up -d --build
+# Modo normal: la API se conecta a la MISMA base de Supabase (DATABASE_URL en ../.env).
+# Modo aislado (Supabase caído): docker compose --profile standalone up -d
+#   y apuntar DATABASE_URL a postgres://xuacha:CLAVE@db:5432/xuacha tras restaurar el último respaldo.
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: node/Dockerfile
+    env_file: ../.env
+    ports:
+      - "127.0.0.1:8787:8787"   # publicar detrás de un proxy con HTTPS (Caddy, Nginx, Traefik)
+    restart: unless-stopped
+
+  db:
+    profiles: ["standalone"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: xuacha
+      POSTGRES_PASSWORD: ${STANDALONE_DB_PASSWORD:?definir STANDALONE_DB_PASSWORD}
+      POSTGRES_DB: xuacha
+    volumes:
+      - xuacha_pg:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  xuacha_pg:

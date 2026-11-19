@@ -1,0 +1,22 @@
+{
+  "name": "xuacha-cobro-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx node/server.ts",
+    "test": "tsx --test tests/api.test.ts",
+    "typecheck": "tsc -p .",
+    "bundle": "esbuild supabase/functions/api/index.ts --bundle --format=esm --external:hono --external:hono/cors --external:postgres --minify-whitespace --charset=utf8 --target=es2022 --outfile=dist/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.14",
+    "postgres": "^3.4.5",
+    "tsx": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "esbuild": "^0.25.0"
+  }
+}

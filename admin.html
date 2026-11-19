@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    <title>Administración · XUACHA RACE</title>
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/css/fonts.css">
+    <link rel="stylesheet" href="assets/css/inscripcion.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+
+<body>
+    <header class="top">
+        <a class="brand" href="index.html">XUACHA <span>RACE</span></a>
+        <p class="secure">Administración</p>
+    </header>
+
+    <!-- Acceso -->
+    <main class="login" id="login">
+        <form id="login-form" novalidate>
+            <h1>Panel de cobro</h1>
+            <p class="lead">Ingresa la llave de administración. Se guarda solo en esta pestaña y se borra al cerrarla.</p>
+            <div class="field">
+                <label for="key">Llave de administración</label>
+                <input id="key" type="password" autocomplete="off" required>
+            </div>
+            <div class="alert" id="login-alert" role="alert" hidden></div>
+            <button class="btn btn-primary" type="submit">Entrar</button>
+        </form>
+    </main>
+
+    <!-- Panel -->
+    <main class="panel" id="panel" hidden>
+        <nav class="tabs" role="tablist" aria-label="Secciones">
+            <button role="tab" data-tab="resumen" aria-selected="true">Resumen</button>
+            <button role="tab" data-tab="codigos" aria-selected="false">Códigos</button>
+            <button role="tab" data-tab="pagos" aria-selected="false">Pagos</button>
+            <button role="tab" data-tab="control" aria-selected="false">Control <span class="badge" id="control-badge" hidden></span></button>
+            <button class="exit" type="button" id="logout">Salir</button>
+        </nav>
+        <div class="alert" id="alert" role="alert" hidden></div>
+
+        <!-- Resumen -->
+        <section id="tab-resumen" role="tabpanel">
+            <div class="tiles" id="tiles"></div>
+            <div class="two">
+                <div class="card"><h2>Inscripciones por estado</h2><table id="by-status"></table></div>
+                <div class="card"><h2>Cupos por distancia</h2><p class="hint">Reservadas y pagadas.</p><table id="by-distance"></table></div>
+            </div>
+        </section>
+
+        <!-- Códigos -->
+        <section id="tab-codigos" role="tabpanel" hidden>
+            <div class="two">
+                <form class="card" id="batch-form" novalidate>
+                    <h2>Generar lote de un solo uso</h2>
+                    <p class="hint">Cada código sirve para una sola inscripción pagada.</p>
+                    <div class="grid2">
+                        <div class="field"><label for="b-count">Cantidad</label><input id="b-count" type="text" inputmode="numeric" value="10"></div>
+                        <div class="field"><label for="b-prefix">Prefijo</label><input id="b-prefix" type="text" maxlength="12" value="XR"></div>
+                        <div class="field"><label for="b-type">Tipo</label><select id="b-type"><option value="percent">Porcentaje</option><option value="fixed">Monto fijo</option></select></div>
+                        <div class="field"><label for="b-value" id="b-value-label">Descuento (%)</label><input id="b-value" type="text" inputmode="numeric" value="10"></div>
+                        <div class="field"><label for="b-until">Vence <em>(opcional)</em></label><input id="b-until" type="date"></div>
+                        <div class="field"><label for="b-note">Nota <em>(opcional)</em></label><input id="b-note" type="text" maxlength="120" placeholder="Club, patrocinador…"></div>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Generar códigos</button>
+                </form>
+
+                <form class="card" id="personal-form" novalidate>
+                    <h2>Código para una persona</h2>
+                    <p class="hint">Solo funciona con el documento indicado.</p>
+                    <div class="grid2">
+                        <div class="field"><label for="p-doc">Documento</label><input id="p-doc" type="text" inputmode="numeric" maxlength="15"></div>
+                        <div class="field"><label for="p-code">Código <em>(opcional)</em></label><input id="p-code" type="text" maxlength="32" placeholder="Se genera solo"></div>
+                        <div class="field"><label for="p-type">Tipo</label><select id="p-type"><option value="percent">Porcentaje</option><option value="fixed">Monto fijo</option></select></div>
+                        <div class="field"><label for="p-value" id="p-value-label">Descuento (%)</label><input id="p-value" type="text" inputmode="numeric" value="100"></div>
+                        <div class="field"><label for="p-until">Vence <em>(opcional)</em></label><input id="p-until" type="date"></div>
+                        <div class="field"><label for="p-note">Nota <em>(opcional)</em></label><input id="p-note" type="text" maxlength="120" placeholder="Nombre, motivo…"></div>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Crear código</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="bar">
+                    <h2>Códigos</h2>
+                    <select id="batch-filter" aria-label="Filtrar por lote"><option value="">Todos los lotes</option></select>
+                    <button class="btn btn-ghost sm" type="button" id="codes-csv">Descargar CSV</button>
+                    <button class="btn btn-ghost sm" type="button" id="codes-print">Imprimir QR</button>
+                </div>
+                <p class="hint" id="codes-count"></p>
+                <div class="scroll"><table id="codes"></table></div>
+            </div>
+        </section>
+
+        <!-- Pagos -->
+        <section id="tab-pagos" role="tabpanel" hidden>
+            <div class="card">
+                <div class="bar">
+                    <h2>Libro de pagos</h2>
+                    <button class="btn btn-ghost sm" type="button" id="ledger-csv">Descargar CSV</button>
+                </div>
+                <p class="hint" id="ledger-total"></p>
+                <p class="hint">Cruza la columna Referencia con el reporte de transacciones de Wompi. El valor es bruto: la comisión y el neto consignado están en el reporte de Wompi.</p>
+                <div class="scroll"><table id="ledger"></table></div>
+            </div>
+        </section>
+
+        <!-- Control -->
+        <section id="tab-control" role="tabpanel" hidden>
+            <p class="verdict" id="verdict"></p>
+            <div class="card"><h2>Inscripciones que no cuadran</h2><p class="hint">El estado no corresponde con lo cobrado. Debe estar vacío.</p><div class="scroll"><table id="mismatches"></table></div></div>
+            <div class="card"><h2>Casos para revisión manual</h2><p class="hint">Pagos duplicados, montos distintos, anulaciones y pagos sobre inscripciones cerradas.</p><div class="scroll"><table id="review"></table></div></div>
+            <div class="card"><h2>Reservas retenidas</h2><p class="hint">Inscripciones vencidas o canceladas que pagaron la reserva. No es un error; es dinero que debe quedar identificado.</p><div class="scroll"><table id="retained"></table></div></div>
+        </section>
+    </main>
+
+    <!-- QR de un código -->
+    <dialog id="qr-dialog">
+        <div class="qr-card">
+            <div id="qr-svg"></div>
+            <p class="qr-code" id="qr-code"></p>
+            <p class="hint" id="qr-desc"></p>
+            <p class="qr-url" id="qr-url"></p>
+            <div class="bar">
+                <button class="btn btn-ghost sm" type="button" id="qr-copy">Copiar enlace</button>
+                <button class="btn btn-ghost sm" type="button" id="qr-png">Descargar PNG</button>
+                <button class="btn btn-primary sm" type="button" id="qr-close">Cerrar</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Hoja de impresión -->
+    <div id="print-sheet" aria-hidden="true"></div>
+
+    <script src="assets/js/xr-config.js"></script>
+    <script src="assets/js/xr-api.js"></script>
+    <script src="assets/js/vendor/qrcode.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+
+</html>
