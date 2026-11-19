@@ -49,18 +49,16 @@ h1, h2, .brand, .steps b, .btn, .plate, .tag {
     border-bottom: 1px solid var(--line);
 }
 
-.brand {
-    color: var(--ink); text-decoration: none;
-    font-weight: 700; font-size: 22px; letter-spacing: 1.5px; white-space: nowrap;
-}
-.brand span { color: var(--orange); }
+.brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand .sym { height: 34px; width: auto; }
+.brand .wm { height: 21px; width: auto; }
 
 .secure {
     margin: 0; display: flex; align-items: center; gap: 6px;
     color: var(--mute); font-size: 13px; white-space: nowrap;
 }
 @media (max-width: 420px) {
-    .brand { font-size: 19px; letter-spacing: 1px; }
+    .brand .sym { height: 30px; } .brand .wm { height: 18px; }
     .secure { font-size: 12px; }
     .secure .long { display: none; }
 }

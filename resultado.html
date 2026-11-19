@@ -8,6 +8,7 @@
     <meta name="referrer" content="no-referrer">
     <title>Resultado del pago · XUACHA RACE</title>
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
     <link rel="stylesheet" href="assets/css/fonts.css">
     <link rel="stylesheet" href="assets/css/inscripcion.css">
     <style>
@@ -21,21 +22,21 @@
 
 <body>
     <header class="top">
-        <a class="brand" href="index.html" aria-label="Volver al sitio de Xuacha Race">XUACHA <span>RACE</span></a>
+        <a class="brand" href="index.html" aria-label="Volver al sitio de Xuacha Race"><img class="sym" src="assets/img/brand/xr-simbolo.svg" alt="" width="36" height="33"><img class="wm" src="assets/img/brand/xr-palabra.svg" alt="XUACHA RACE" width="96" height="22"></a>
     </header>
 
     <main class="result" aria-live="polite">
         <div class="spinner" id="spinner" aria-hidden="true"></div>
         <p class="tag" id="tag" hidden></p>
         <h1 id="title">Confirmando tu pago…</h1>
-        <p class="lead" id="lead">Estamos esperando la confirmación de Wompi. No cierres esta página.</p>
+        <p class="lead" id="lead">Estamos esperando la confirmación de la pasarela de pagos. No cierres esta página.</p>
         <a class="btn btn-primary" id="cta" href="inscripcion.html" hidden>Ver mi inscripción</a>
     </main>
 
     <script src="assets/js/xr-config.js"></script>
     <script src="assets/js/xr-api.js"></script>
     <script>
-        // El estado se lee de la API, que lo confirma con Wompi de servidor a servidor.
+        // El estado se lee de la API, que lo confirma con la pasarela de servidor a servidor.
         // El parámetro "id" de la URL solo indica qué transacción consultar.
         (function () {
             'use strict';

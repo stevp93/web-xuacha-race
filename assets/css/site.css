@@ -57,7 +57,11 @@ img, svg, canvas { display: block; max-width: 100%; }
 }
 .loader.done { clip-path: inset(0 0 100% 0); visibility: hidden; }
 .loader div { text-align: center; }
-.loader b { display: block; font: 700 clamp(80px, 22vw, 260px)/.85 'Oswald', sans-serif; font-variant-numeric: tabular-nums; }
+.loader .mark { position: relative; display: block; width: min(170px, 40vw); aspect-ratio: 1043 / 952; margin: 0 auto 22px; }
+.loader .mark img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.loader .mark img:first-child { opacity: .12; }
+.loader .mark img + img { clip-path: inset(calc(100% - var(--p, 0) * 1%) 0 0 0); transition: clip-path .25s linear; filter: drop-shadow(0 0 24px rgba(234, 207, 181, .25)); }
+.loader b { display: block; font: 700 clamp(48px, 11vw, 110px)/.9 'Oswald', sans-serif; font-variant-numeric: tabular-nums; }
 .loader span { font: 500 13px 'Roboto', sans-serif; letter-spacing: 4px; text-transform: uppercase; color: var(--mute); }
 .loader i { display: block; height: 3px; margin: 18px auto 0; width: min(320px, 60vw); background: var(--line); overflow: clip; }
 .loader i::after { content: ''; display: block; height: 100%; width: calc(var(--p, 0) * 1%); background: var(--orange); transition: width .2s; }
@@ -71,8 +75,11 @@ img, svg, canvas { display: block; max-width: 100%; }
 .nav.solid { background: rgba(5, 5, 5, .82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: var(--line); }
 .nav.hide { transform: translateY(-100%); }
 .nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-.brand { font-weight: 700; font-size: 23px; letter-spacing: 1.5px; text-decoration: none; white-space: nowrap; view-transition-name: brand; }
-.brand span { color: var(--orange); }
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; view-transition-name: brand; }
+.brand .sym { height: 40px; width: auto; transition: transform .6s var(--ease); }
+.brand .wm { height: 24px; width: auto; }
+.brand:hover .sym { transform: rotate(-8deg) scale(1.06); }
+@media (max-width: 380px) { .brand .sym { height: 34px; } .brand .wm { height: 20px; } }
 .nav-links { display: none; align-items: center; gap: 4px; padding: 5px; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: rgba(5,5,5,.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .nav-links a {
     position: relative; z-index: 0; padding: 9px 16px; border-radius: 999px; text-decoration: none; color: var(--mute);
@@ -101,7 +108,7 @@ img, svg, canvas { display: block; max-width: 100%; }
 .menu a[aria-current="page"] { -webkit-text-stroke: 1.5px #120400; color: transparent; }
 .menu .btn { margin-top: 28px; background: #120400; color: var(--ink); font-size: 18px; border: 0; }
 .menu-open .nav { background: transparent; border-color: transparent; backdrop-filter: none; }
-.menu-open .brand span { color: #120400; }
+.menu-open .brand img { filter: brightness(0) saturate(100%); opacity: .85; }
 @media (min-width: 960px) { .nav-links { display: flex; } .nav .nav-cta { display: inline-flex; } .menu-btn, .menu { display: none; } }
 
 /* ---------- botones ---------- */
@@ -137,9 +144,9 @@ img, svg, canvas { display: block; max-width: 100%; }
 .film .copy { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--nav-h) var(--gutter) 90px; text-align: center; pointer-events: none; }
 .film .beat { grid-area: 1 / 1; opacity: var(--o, 0); transform: translateY(calc(var(--y, 0) * 1px)) scale(var(--s, 1)); will-change: opacity, transform; }
 .film .beat a, .film .beat button { pointer-events: auto; }
-.film .title { font-weight: 700; font-size: clamp(76px, 19vw, 330px); line-height: .82; letter-spacing: -.01em; text-transform: uppercase; }
-.film .title span { display: block; }
-.film .title .outline { -webkit-text-stroke-width: clamp(2px, .3vw, 4px); }
+.film .title { margin: 0; line-height: 0; }
+.film .title img { width: min(76vw, 62vh * 1408 / 1281, 760px); height: auto; filter: drop-shadow(0 12px 40px rgba(0, 0, 0, .6)); }
+@media (max-aspect-ratio: 3/4) { .film .title { padding-bottom: 26vh; } }
 .film .say { font: 700 clamp(56px, 12vw, 200px)/.9 'Oswald', sans-serif; text-transform: uppercase; }
 .film .say small { display: block; margin-bottom: 14px; font: 500 clamp(13px, 1.2vw, 16px) 'Roboto', sans-serif; letter-spacing: 5px; color: var(--ink); opacity: .8; }
 .film .final h2 { font-size: clamp(48px, 9vw, 150px); }
@@ -322,6 +329,7 @@ img, svg, canvas { display: block; max-width: 100%; }
 .footer nav { display: flex; flex-wrap: wrap; gap: 6px 24px; }
 .footer nav a { padding: 8px 0; color: var(--mute); text-decoration: none; font-size: 15px; transition: color .2s; }
 .footer nav a:hover { color: var(--lime); }
+.footer .logo { width: 170px; height: auto; margin-bottom: 18px; }
 .footer .tagline { color: var(--mute); max-width: 36ch; }
 .footer .base { margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; justify-content: space-between; font-size: 13px; color: var(--mute); }
 .footer .made { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--mute); }

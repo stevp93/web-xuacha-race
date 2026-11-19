@@ -24,7 +24,11 @@ def page(file, title, desc, body, track):
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#050505">
-<meta property="og:image" content="https://www.xuacharace.com/assets/img/scene-1.webp">
+<meta property="og:image" content="https://www.xuacharace.com/assets/img/og-xuacha-race.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/oswald-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/fonts.css">
@@ -34,10 +38,10 @@ def page(file, title, desc, body, track):
 </head>
 <body>
 <a class="skip" href="#main">Saltar al contenido</a>
-{'<div class="loader" id="loader" aria-hidden="true"><div><b>00</b><span>Cargando la montaña</span><i></i></div></div>' if file == 'index.html' else ''}
+{'<div class="loader" id="loader" aria-hidden="true"><div><span class="mark"><img src="assets/img/brand/xr-simbolo.svg" alt=""><img src="assets/img/brand/xr-simbolo.svg" alt=""></span><b>00</b><span>Cargando la montaña</span><i></i></div></div>' if file == 'index.html' else ''}
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="index.html" aria-label="XUACHA RACE, inicio">XUACHA <span>RACE</span></a>
+    <a class="brand" href="index.html" aria-label="XUACHA RACE, inicio"><img class="sym" src="assets/img/brand/xr-simbolo.svg" alt="" width="42" height="38"><img class="wm" src="assets/img/brand/xr-palabra.svg" alt="XUACHA RACE" width="114" height="26"></a>
     <nav class="nav-links" aria-label="Principal">{links}</nav>
     <a class="btn btn-primary btn-sm nav-cta" href="inscripcion.html" data-track="inscripcion_nav">Inscripción</a>
     <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú"><span></span></button>
@@ -52,6 +56,7 @@ def page(file, title, desc, body, track):
     <p class="giant" aria-hidden="true">Xuacha <span>Race</span></p>
     <div class="top">
       <div>
+        <img class="logo" src="assets/img/brand/xr-logo.svg" alt="XUACHA RACE" width="1408" height="1281" loading="lazy">
         <p class="tagline">Xuacha no se pedalea, se conquista. Carrera de MTB en Soacha, Cundinamarca.</p>
       </div>
       <nav aria-label="Pie de página">
@@ -83,7 +88,7 @@ HOME = f'''<section class="film" id="film" data-frames="121" data-d="assets/film
     <div class="shade"></div>
     <div class="copy">
       <div class="beat" data-a="0" data-b="0.2" style="--o:1">
-        <h1 class="title"><span>Xuacha</span><span class="outline">Race</span></h1>
+        <h1 class="title"><img src="assets/img/brand/xr-logo.svg" alt="XUACHA RACE" width="1408" height="1281" fetchpriority="high"></h1>
       </div>
       {"".join(f'<div class="beat" data-a="{a}" data-b="{b}" aria-hidden="true">{h}</div>' for a, b, h, _ in BEATS)}
       <div class="beat final" data-a="0.84" data-b="1" data-keep>
@@ -170,7 +175,7 @@ HOME = f'''<section class="film" id="film" data-frames="121" data-d="assets/film
     <div class="steps">
       <article class="step rv"><b>01</b><h3>Tus datos</h3><p>Nombre, documento, correo y WhatsApp. Nada más para empezar.</p></article>
       <article class="step rv"><b>02</b><h3>Tu carrera</h3><p>Eliges distancia y categoría. Si tienes un código de descuento, se aplica aquí.</p></article>
-      <article class="step rv"><b>03</b><h3>Tu pago</h3><p>Pago completo o reserva más saldo, sin intereses. Tarjeta, PSE o Nequi en la página segura de Wompi.</p></article>
+      <article class="step rv"><b>03</b><h3>Tu pago</h3><p>Pago completo o reserva más saldo, sin intereses. Medios de pago y condiciones se publican con la apertura de inscripciones.</p></article>
     </div>
   </div>
 </section>
@@ -291,7 +296,7 @@ EXP = phero('Experiencia', ['Más que una', '<span class="outline">carrera</span
 
 FAQ = [('¿Cuándo es la edición 2027 y cuánto cuesta?', 'La fecha y los valores se anuncian con la apertura de inscripciones. Escríbenos por WhatsApp y te avisamos primero.'),
        ('¿Puedo pagar en cuotas?', 'Sí. Puedes pagar todo de una vez o pagar una reserva hoy y el saldo antes de la fecha límite. No hay intereses ni estudio de crédito, y te recordamos el saldo por WhatsApp.'),
-       ('¿Qué medios de pago aceptan?', 'El pago se hace en la página segura de Wompi: tarjeta débito o crédito, PSE y Nequi, entre otros. Esta web nunca pide ni guarda datos de tu tarjeta.'),
+       ('¿Qué medios de pago aceptan?', 'Los medios de pago se anuncian con la apertura de inscripciones. El pago se hace en la página segura de la pasarela: esta web nunca pide ni guarda datos de tu tarjeta.'),
        ('Empecé mi inscripción y no la terminé. ¿Qué hago?', 'Abre el enlace que te enviamos por WhatsApp, o entra a Inscripción, elige "Ya empecé mi inscripción" y escribe tu documento. Te enviamos un código para retomarla donde quedó.'),
        ('Tengo un código de descuento. ¿Dónde lo uso?', 'En el paso "Tu carrera". Si lo recibiste como enlace o QR, al abrirlo el código se aplica solo.'),
        ('¿Hay devoluciones?', 'La política de devoluciones y cesión de cupo de 2027 se publica en el reglamento de la edición.')]

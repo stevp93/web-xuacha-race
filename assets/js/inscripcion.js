@@ -328,7 +328,7 @@
   $('back-carrera').addEventListener('click', function () { patch({ step: 2 }).then(openCarrera).catch(fail); });
 
   function goCheckout(btn) {
-    busy(btn, true, 'Abriendo Wompi…');
+    busy(btn, true, 'Abriendo la pasarela de pagos…');
     return XR.api('POST', '/registrations/me/checkout', {})
       .then(function (c) { window.location.href = c.checkout_url; })
       .catch(function (err) { busy(btn, false); fail(err); });
@@ -337,7 +337,7 @@
   $('view-pago').addEventListener('submit', function (e) {
     e.preventDefault(); hideAlert();
     var btn = $('pay-btn');
-    busy(btn, true, 'Abriendo Wompi…');
+    busy(btn, true, 'Abriendo la pasarela de pagos…');
     XR.api('PUT', '/registrations/me/plan', { plan: state.plan })
       .then(function (reg) { state.reg = reg; busy(btn, false); return goCheckout(btn); })
       .catch(function (err) { busy(btn, false); fail(err); });
