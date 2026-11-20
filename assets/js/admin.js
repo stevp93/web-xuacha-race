@@ -58,7 +58,13 @@
   }
 
   function csv(filename, header, rows) {
-    var esc = function (v) { v = v == null ? '' : String(v); return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var esc = function (v) {
+      var isText = typeof v === 'string';
+      v = v == null ? '' : String(v);
+      // Un texto que empieza por = + - @ (o tab/retorno) Excel lo ejecuta como fórmula: se antepone ' para que quede como texto.
+      if (isText && /^[=+\-@\t\r]/.test(v)) v = "'" + v;
+      return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    };
     var text = '﻿' + [header].concat(rows).map(function (r) { return r.map(esc).join(';'); }).join('\r\n');
     var a = el('a', { href: URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' })), download: filename });
     document.body.appendChild(a); a.click(); a.remove();

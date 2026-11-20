@@ -6,6 +6,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var VIEWS = ['loading', 'cerrado', 'datos', 'recovery', 'carrera', 'pago', 'estado'];
   var DRAFT_KEY = 'xr_paso1';
+  var NAME_RE = /^[\p{L}\p{M}' ’-]+$/u; // misma regla del servidor
 
   var state = { event: null, reg: null, plan: null };
 
@@ -21,6 +22,8 @@
       if (n === step) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
     });
     $('steps').hidden = view === 'cerrado' || view === 'loading';
+    $('another-wrap').hidden = !(state.reg && (view === 'carrera' || view === 'pago' || view === 'estado'));
+    $('another-box').hidden = true;
     window.scrollTo(0, 0);
     var h = $('view-' + view).querySelector('h1');
     if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
@@ -125,7 +128,10 @@
   function validateDatos() {
     var ok = true;
     function check(id, valid) { $(id).setAttribute('aria-invalid', valid ? 'false' : 'true'); if (!valid && ok) { $(id).focus(); ok = false; } }
-    check('full_name', /\S+\s+\S+/.test($('full_name').value.trim()));
+    var name = $('full_name').value.trim();
+    var nameOk = /\S+\s+\S+/.test(name) && NAME_RE.test(name.replace(/\s+/g, ' '));
+    check('full_name', nameOk);
+    if (!nameOk && /\S+\s+\S+/.test(name)) { showAlert('Escribe tu nombre solo con letras, sin números ni símbolos.'); return false; }
     check('doc_number', /^[0-9A-Za-z]{5,15}$/.test($('doc_number').value.trim()));
     check('email', /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test($('email').value.trim()));
     check('whatsapp', /^3\d{9}$/.test($('whatsapp').value.replace(/\D/g, '')));
@@ -136,35 +142,53 @@
 
   $('view-datos').addEventListener('input', function () { saveDraft(); renderPlate(); });
 
-  $('view-datos').addEventListener('submit', function (e) {
-    e.preventDefault();
-    hideAlert();
-    if (!validateDatos()) return;
-    var btn = e.target.querySelector('button[type=submit]');
-    busy(btn, true);
+  function datosBody() {
     var body = {
       full_name: $('full_name').value.trim(), doc_type: $('doc_type').value, doc_number: $('doc_number').value.trim(),
       email: $('email').value.trim(), whatsapp: $('whatsapp').value.replace(/\D/g, ''), consent: true,
     };
     var ts = document.querySelector('[name="cf-turnstile-response"]');
     if (ts) body.turnstile_token = ts.value;
-    XR.api('POST', '/registrations', body).then(function (res) {
-      XR.Token.set(res.resume_token);
-      try { sessionStorage.removeItem(DRAFT_KEY); } catch (err) { /* nada */ }
-      route(res.registration);
-    }).catch(function (err) {
+    return body;
+  }
+
+  function created(res) {
+    XR.Token.set(res.resume_token);
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch (err) { /* nada */ }
+    route(res.registration);
+  }
+
+  $('view-datos').addEventListener('submit', function (e) {
+    e.preventDefault();
+    hideAlert();
+    if (!validateDatos()) return;
+    var btn = e.target.querySelector('button[type=submit]');
+    busy(btn, true);
+    XR.api('POST', '/registrations', datosBody()).then(created).catch(function (err) {
       if (err.code === 'REGISTRATION_EXISTS') {
-        openRecovery($('doc_type').value, $('doc_number').value.trim(), 'Ya hay una inscripción con este documento. Te enviamos un código al WhatsApp registrado para retomarla.');
+        openRecovery($('doc_type').value, $('doc_number').value.trim(), 'Ya hay una inscripción con este documento. Te enviamos un código al WhatsApp registrado para retomarla.', true);
       } else if (err.code === 'REGISTRATION_CLOSED') { show('cerrado'); } else { fail(err); }
     }).then(function () { busy(btn, false); });
   });
 
+  // Empezar de nuevo sobre un borrador sin pagos (por ejemplo, si el WhatsApp quedó mal escrito).
+  $('restart-open').addEventListener('click', function () { $('restart-box').hidden = !$('restart-box').hidden; });
+  $('restart-go').addEventListener('click', function () {
+    hideAlert();
+    var btn = $('restart-go'), body = datosBody();
+    body.replace_draft = true;
+    busy(btn, true);
+    XR.api('POST', '/registrations', body).then(created).catch(fail).then(function () { busy(btn, false); });
+  });
+
   // ---------- recuperación ----------
 
-  function openRecovery(docType, docNumber, lead) {
+  function openRecovery(docType, docNumber, lead, fromDatos) {
     show('recovery');
     $('recovery-request').hidden = false;
     $('recovery-verify').hidden = true;
+    $('restart').hidden = !fromDatos;
+    $('restart-box').hidden = true;
     $('recovery-lead').textContent = lead || 'Escribe tu documento y te enviamos un código al WhatsApp que registraste.';
     if (docType) $('rec_doc_type').value = docType;
     if (docNumber) { $('rec_doc_number').value = docNumber; requestCode(); }
@@ -331,7 +355,23 @@
     busy(btn, true, 'Abriendo la pasarela de pagos…');
     return XR.api('POST', '/registrations/me/checkout', {})
       .then(function (c) { window.location.href = c.checkout_url; })
-      .catch(function (err) { busy(btn, false); fail(err); });
+      .catch(function (err) { busy(btn, false); checkoutFailed(err); });
+  }
+
+  function checkoutFailed(err) {
+    // El código pudo agotarse, vencer o cambiar después de aplicarlo: se vuelve al paso 2.
+    if (/^PROMO_/.test(err.code)) {
+      return XR.api('GET', '/registrations/me').then(function (reg) {
+        state.reg = reg; state.event = reg.event; openCarrera(); showAlert(err.message); setPromoMsg(err.message, 'err');
+      }).catch(fail);
+    }
+    // El plan en cuotas cerró: se recarga el evento para que la opción aparezca deshabilitada.
+    if (err.code === 'PLAN_NOT_AVAILABLE') {
+      return XR.api('GET', '/registrations/me').then(function (reg) {
+        state.reg = reg; state.event = reg.event; openPago(); showAlert(err.message);
+      }).catch(fail);
+    }
+    fail(err);
   }
 
   $('view-pago').addEventListener('submit', function (e) {
@@ -340,7 +380,7 @@
     busy(btn, true, 'Abriendo la pasarela de pagos…');
     XR.api('PUT', '/registrations/me/plan', { plan: state.plan })
       .then(function (reg) { state.reg = reg; busy(btn, false); return goCheckout(btn); })
-      .catch(function (err) { busy(btn, false); fail(err); });
+      .catch(function (err) { busy(btn, false); checkoutFailed(err); });
   });
 
   // ---------- estado: reservada, pagada, vencida ----------
@@ -368,7 +408,9 @@
     } else {
       tag.textContent = r.status === 'expired' ? 'Inscripción vencida' : 'Inscripción cerrada'; tag.className = 'tag off';
       $('estado-title').textContent = 'Esta inscripción ya no está activa';
-      $('estado-lead').textContent = 'El plazo terminó y el cupo fue liberado. Si crees que es un error, escríbenos por WhatsApp con la referencia ' + r.short_id + '.';
+      $('estado-lead').textContent = r.status === 'cancelled'
+        ? 'Se empezó una inscripción nueva con este documento. Retómala con tu documento o con el último enlace que llegó a tu WhatsApp. Referencia: ' + r.short_id + '.'
+        : 'El plazo terminó y el cupo fue liberado. Si crees que es un error, escríbenos por WhatsApp con la referencia ' + r.short_id + '.';
     }
     var fd = r.form_data || {};
     $('emergency_name').value = fd.emergency_name || '';
@@ -380,6 +422,20 @@
   }
 
   $('pay-balance').addEventListener('click', function () { hideAlert(); goCheckout($('pay-balance')); });
+
+  // Otra persona en el mismo dispositivo: la sesión actual se cierra aquí y queda guardada en el servidor.
+  $('another').addEventListener('click', function () { $('another-box').hidden = !$('another-box').hidden; });
+  $('another-go').addEventListener('click', function () {
+    XR.Token.clear();
+    state.reg = null; state.plan = null;
+    ['full_name', 'doc_number', 'email', 'whatsapp'].forEach(function (k) { $(k).value = ''; });
+    $('consent').checked = false;
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) { /* nada */ }
+    renderPlate();
+    if (state.event && !state.event.registration_open) { show('cerrado'); return; }
+    loadTurnstile();
+    show('datos');
+  });
 
   $('extra').addEventListener('submit', function (e) {
     e.preventDefault(); hideAlert();
@@ -393,7 +449,7 @@
   // ---------- inicio ----------
 
   function loadTurnstile() {
-    if (!XR.cfg.turnstileSiteKey) return;
+    if (!XR.cfg.turnstileSiteKey || $('turnstile-slot').firstChild) return;
     $('turnstile-slot').appendChild(el('div', { class: 'cf-turnstile', 'data-sitekey': XR.cfg.turnstileSiteKey, 'data-theme': 'dark' }));
     document.head.appendChild(el('script', { src: 'https://challenges.cloudflare.com/turnstile/v0/api.js', async: '', defer: '' }));
   }

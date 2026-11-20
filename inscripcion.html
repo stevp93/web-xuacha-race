@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
     <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https:; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'none'; form-action 'self'">
     <title>Inscripción · XUACHA RACE</title>
     <!-- Esta página maneja datos personales: no carga analítica ni grabación de sesión. -->
     <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -120,7 +121,15 @@
                     <button class="btn btn-primary" type="submit">Entrar</button>
                 </form>
 
-                <button class="link" type="button" id="back-datos">Empezar una inscripción nueva</button>
+                <div class="restart" id="restart" hidden>
+                    <button class="link" type="button" id="restart-open">¿Escribiste mal tu WhatsApp? Empieza de nuevo</button>
+                    <div class="confirm-box" id="restart-box" hidden>
+                        <p>Se descarta el avance de la inscripción anterior, que aún no tiene pagos, y se crea una nueva con los datos que acabas de escribir.</p>
+                        <button class="btn btn-ghost" type="button" id="restart-go">Empezar de nuevo</button>
+                    </div>
+                </div>
+
+                <button class="link" type="button" id="back-datos">Volver al formulario</button>
             </div>
 
             <!-- Paso 2 -->
@@ -199,6 +208,15 @@
                     <button class="btn btn-ghost" type="submit">Guardar datos</button>
                     <p class="hint" id="extra-msg"></p>
                 </form>
+            </div>
+
+            <!-- Otra persona en el mismo dispositivo -->
+            <div class="another" id="another-wrap" hidden>
+                <button class="link" type="button" id="another">Inscribir a otra persona</button>
+                <div class="confirm-box" id="another-box" hidden>
+                    <p>Esta inscripción queda guardada: la retomas con el enlace que llegó a tu WhatsApp o con tu documento.</p>
+                    <button class="btn btn-ghost" type="button" id="another-go">Sí, inscribir a otra persona</button>
+                </div>
             </div>
         </section>
 

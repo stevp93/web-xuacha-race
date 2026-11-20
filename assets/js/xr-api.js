@@ -45,10 +45,14 @@
     if (t) headers.Authorization = 'Bearer ' + t;
     return fetch(base + path, { method: method, headers: headers, body: body === undefined ? undefined : JSON.stringify(body) })
       .then(function (res) {
-        if (res.status === 502 || res.status === 503 || res.status === 504) throw new TypeError('gateway ' + res.status);
         return res.text().then(function (text) {
           var json = null;
           try { json = text ? JSON.parse(text) : null; } catch (e) { /* respuesta no JSON */ }
+          // 502/503/504 sin un error de la API significa que la plataforma no respondió: se trata
+          // como falla de red y pasa al respaldo. Un 503 con código propio (p. ej. pasarela sin
+          // configurar) es una respuesta de negocio y se muestra tal cual.
+          var fromApi = !!(json && json.error && json.error.code);
+          if ((res.status === 502 || res.status === 503 || res.status === 504) && !fromApi) throw new TypeError('gateway ' + res.status);
           if (!res.ok) {
             var err = (json && json.error) || {};
             throw new ApiError(res.status, err.code || 'HTTP_' + res.status, err.message || 'No pudimos completar la operación.');

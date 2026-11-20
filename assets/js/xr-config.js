@@ -1,4 +1,6 @@
 // Configuración del formulario de inscripción. Solo valores públicos: aquí no va ningún secreto.
+// inscripcion.html, resultado.html y admin.html tienen una política de seguridad de contenido (CSP):
+// permite llamar a cualquier API https y cargar Turnstile desde challenges.cloudflare.com.
 window.XR_CONFIG = {
   // API principal (Supabase Edge Functions, proyecto "Pasarela pagos Xuacha Race 2027").
   apiBase: 'https://bxtmachwamcfugodthef.supabase.co/functions/v1/api',
