@@ -13,6 +13,11 @@ export type WompiConfig = {
 
 export const CHECKOUT_URL = 'https://checkout.wompi.co/p/';
 
+/** API de Wompi que corresponde a la llave pública: pub_prod_ → producción; cualquier otra → pruebas. */
+export function apiBaseFor(publicKey: string): string {
+  return publicKey.startsWith('pub_prod_') ? 'https://production.wompi.co/v1' : 'https://sandbox.wompi.co/v1';
+}
+
 /**
  * SHA-256 de: referencia + monto en centavos + moneda + vencimiento + secreto de integridad.
  * Validar en sandbox: si Wompi rechaza la firma, revisar la posición de expirationTime.
@@ -40,7 +45,6 @@ export async function buildCheckoutUrl(cfg: WompiConfig, input: CheckoutInput): 
   const signature = await integritySignature(
     input.reference, input.amountInCents, input.currency, input.expirationTime, cfg.integritySecret,
   );
-  const phone = input.customer.phone.replace(/^\+57/, '').replace(/\D/g, '');
   const params: [string, string][] = [
     ['public-key', cfg.publicKey],
     ['currency', input.currency],
@@ -51,11 +55,13 @@ export async function buildCheckoutUrl(cfg: WompiConfig, input: CheckoutInput): 
     ['redirect-url', input.redirectUrl],
     ['customer-data:email', input.customer.email],
     ['customer-data:full-name', input.customer.fullName],
-    ['customer-data:phone-number', phone],
-    ['customer-data:phone-number-prefix', '+57'],
     ['customer-data:legal-id', input.customer.legalId],
     ['customer-data:legal-id-type', input.customer.legalIdType],
   ];
+  // El teléfono se prellena solo para números de Colombia; con otro indicativo lo escribe la persona.
+  if (/^\+57\d{10}$/.test(input.customer.phone)) {
+    params.push(['customer-data:phone-number', input.customer.phone.slice(3)], ['customer-data:phone-number-prefix', '+57']);
+  }
   return CHECKOUT_URL + '?' + params.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
 }
 

@@ -5,7 +5,8 @@ import { addDays, addHours, atBogotaHour, clampToSendWindow, formatCop, formatDa
 
 type Ctx = { name: string; eventName: string; link: string };
 
-export const first = (fullName: string) => fullName.trim().split(/\s+/)[0];
+// Solo el primer nombre, y corto: el texto lo escribe quien se inscribe.
+export const first = (fullName: string) => fullName.trim().split(/\s+/)[0].slice(0, 20);
 
 export const templates = {
   draft_reminder: (c: Ctx) =>

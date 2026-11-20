@@ -30,13 +30,21 @@ export type Deps = {
   now?: () => Date;
   fetchImpl?: (input: string, init?: any) => Promise<any>;
   build?: string | null;      // huella del código desplegado, visible en /health
+  // IP del cliente para los límites de intentos. Por defecto, la que fija la plataforma
+  // (en Supabase, Cloudflare escribe cf-connecting-ip y rechaza el valor que mande el cliente).
+  clientIp?: (c: any) => string | undefined;
 };
 
 export const ACTIVE = ['draft', 'reserved', 'paid'];
 export const DOC_TYPES = ['CC', 'CE', 'TI', 'PP'];
 export const CHECKOUT_TTL_MIN = 30;
+export const MAX_BODY_BYTES = 32 * 1024;
+export const DRAIN_MAX_BYTES = 16 * 1024 * 1024;
+// Nombre: letras (con tildes), espacios, apóstrofo y guion. Sin números, puntos ni símbolos:
+// el nombre viaja en los mensajes de WhatsApp y en los CSV del panel.
+export const NAME_RE = /^[\p{L}\p{M}' ’-]+$/u;
 
-export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i) => fetch(u, i), build }: Deps) {
+export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i) => fetch(u, i), build, clientIp: ipOf }: Deps) {
   const app = new Hono().basePath(cfg.basePath);
 
   app.use('*', cors({
@@ -45,6 +53,38 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
     allowHeaders: ['Content-Type', 'Authorization'],
     maxAge: 600,
   }));
+
+  // Límite de tamaño del cuerpo: ningún formulario ni evento de Wompi se acerca a 32 KB.
+  // Lo que exceda se lee y se descarta (sin guardarlo) antes de responder 413: si se responde
+  // sin leer un cuerpo grande, el intermediario de Supabase sigue esperando para terminar de
+  // enviarlo y la conexión queda colgada. Más allá de DRAIN_MAX_BYTES se corta la lectura.
+  app.use('*', async (c, next) => {
+    const body = c.req.raw.body;
+    if (!body) return next();
+    const declared = c.req.header('content-length');
+    if (declared != null && !c.req.header('transfer-encoding') && Number(declared) <= MAX_BODY_BYTES) return next();
+    const reader = body.getReader();
+    const chunks: Uint8Array[] = [];
+    let size = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size <= MAX_BODY_BYTES) chunks.push(value);
+      else if (size > DRAIN_MAX_BYTES) { await reader.cancel().catch(() => {}); break; }
+    }
+    if (size > MAX_BODY_BYTES) {
+      return c.json({ error: { code: 'PAYLOAD_TOO_LARGE', message: 'La solicitud es demasiado grande' } }, 413);
+    }
+    if (c.req.method === 'GET' || c.req.method === 'HEAD') return next();
+    const buf = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) { buf.set(chunk, offset); offset += chunk.byteLength; }
+    c.req.raw = new Request(c.req.raw, { body: buf });
+    return next();
+  });
+
+  app.notFound((c) => c.json({ error: { code: 'NOT_FOUND', message: 'Ruta no encontrada' } }, 404));
 
   app.onError((err: any, c) => {
     if (err instanceof ApiError) {
@@ -59,8 +99,22 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
 
   // ---------- utilidades ----------
 
-  const clientIp = (c: any): string =>
-    (c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || 'unknown').split(',')[0].trim();
+  const clientIp = (c: any): string => {
+    const ip = ipOf ? ipOf(c) : (c.req.header('cf-connecting-ip') || c.req.header('x-forwarded-for') || '').split(',')[0];
+    return String(ip ?? '').trim().slice(0, 64) || 'unknown';
+  };
+
+  /** Hay un pago en curso o ya cobrado: no se puede vencer ni reemplazar la inscripción. */
+  async function hasOpenPayment(db: any, registrationId: string, t: Date): Promise<boolean> {
+    const [row] = await db`
+      select 1 from payment_attempts
+      where registration_id = ${registrationId}
+        and (status in ('PENDING', 'APPROVED') or (status = 'CREATED' and expires_at > ${t}))
+      limit 1`;
+    return Boolean(row);
+  }
+
+  const hasOwn = (o: any, k: string) => o != null && Object.prototype.hasOwnProperty.call(o, k);
 
   async function readJson(c: any): Promise<any> {
     try {
@@ -208,8 +262,13 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
 
   const gatewayReady = () => Boolean(cfg.wompi.publicKey && cfg.wompi.integritySecret && cfg.wompi.eventsSecret);
 
+  // Llave de producción contra API de pruebas (o al revés): los pagos se cobrarían pero nunca se confirmarían.
+  const keyEnv = cfg.wompi.publicKey.startsWith('pub_prod_') ? 'production' : cfg.wompi.publicKey.startsWith('pub_test_') ? 'sandbox' : null;
+  const apiEnv = /production\.wompi\.co/.test(cfg.wompi.apiBase) ? 'production' : /sandbox\.wompi\.co/.test(cfg.wompi.apiBase) ? 'sandbox' : 'other';
+
   app.get('/health', (c) => c.json({
     ok: true, build: build ?? null, gateway_configured: gatewayReady(),
+    gateway_env: keyEnv, gateway_mismatch: Boolean(keyEnv && apiEnv !== 'other' && keyEnv !== apiEnv),
     admin_configured: Boolean(cfg.adminApiKey), internal_configured: Boolean(cfg.internalApiKey),
   }));
 
@@ -219,18 +278,24 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
   app.post('/registrations', async (c) => {
     const body = await readJson(c);
     const t = now();
-    await rateLimit(sql, `reg:${clientIp(c)}`, 10, 3600, t);
 
-    const fullName = String(body.full_name ?? '').trim().replace(/\s+/g, ' ');
+    const fullName = String(body.full_name ?? '').normalize('NFC').trim().replace(/\s+/g, ' ');
     const docType = String(body.doc_type ?? '').toUpperCase();
     const docNumber = String(body.doc_number ?? '').trim().toUpperCase();
     const email = String(body.email ?? '').trim().toLowerCase();
     if (fullName.length < 5 || fullName.length > 120 || !fullName.includes(' ')) throw bad('Escribe nombre y apellido');
+    if (!NAME_RE.test(fullName)) throw bad('Escribe tu nombre solo con letras, sin números ni símbolos');
     if (!DOC_TYPES.includes(docType)) throw bad('Tipo de documento inválido');
     if (!/^[0-9A-Z]{5,15}$/.test(docNumber)) throw bad('Número de documento inválido');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 160) throw bad('Correo inválido');
+    if (!/^[^\s@<>]+@[^\s@<>]+\.[a-z]{2,}$/.test(email) || email.length > 160) throw bad('Correo inválido');
     const whatsapp = normalizePhone(body.whatsapp);
     if (body.consent !== true) throw bad('Debes autorizar el tratamiento de datos');
+
+    // Límites después de validar: un error de digitación no gasta intentos.
+    // Por IP con margen para redes móviles compartidas (CGNAT); por número, para que nadie
+    // use el formulario para llenar de mensajes un WhatsApp ajeno.
+    await rateLimit(sql, `reg:${clientIp(c)}`, 30, 3600, t);
+    await rateLimit(sql, `regwa:${whatsapp}`, 5, 86400, t);
 
     if (cfg.turnstileSecret) {
       const res = await fetchImpl('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
@@ -253,9 +318,19 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
         select * from participants where doc_type = ${docType} and doc_number = ${docNumber} for update`;
       if (person) {
         const [active] = await tx`
-          select id from registrations
-          where participant_id = ${person.id} and event_id = ${event.id} and status = any(${ACTIVE})`;
-        if (active) throw new ApiError(409, 'REGISTRATION_EXISTS', 'Ya existe una inscripción con este documento.');
+          select id, status from registrations
+          where participant_id = ${person.id} and event_id = ${event.id} and status = any(${ACTIVE}) for update`;
+        if (active) {
+          if (body.replace_draft !== true) throw new ApiError(409, 'REGISTRATION_EXISTS', 'Ya existe una inscripción con este documento.');
+          // Empezar de nuevo (p. ej. el WhatsApp quedó mal escrito): solo sobre un borrador sin pagos.
+          if (active.status !== 'draft' || await hasOpenPayment(tx, active.id, t)) {
+            throw new ApiError(409, 'REGISTRATION_NOT_REPLACEABLE',
+              'Esta inscripción no se puede reiniciar. Retómala con el código que enviamos a tu WhatsApp o escríbenos.');
+          }
+          await tx`update registrations set status = 'cancelled', updated_at = ${t} where id = ${active.id}`;
+          await cancelPending(tx, active.id, ['draft_']);
+          await tx`insert into audit_log (registration_id, action, detail) values (${active.id}, 'draft_replaced', ${tx.json({ ip: clientIp(c) })})`;
+        }
         [person] = await tx`
           update participants
           set full_name = ${fullName}, email = ${email}, whatsapp_e164 = ${whatsapp}, consent_at = ${t}, updated_at = ${t}
@@ -321,11 +396,13 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
       const touchesOrder = ['distance', 'category', 'promo_code'].some((k) => body[k] !== undefined);
       if (touchesOrder) {
         if (reg.status !== 'draft') throw new ApiError(409, 'REGISTRATION_LOCKED', 'La inscripción ya tiene pagos y no se puede modificar');
-        const distance = body.distance !== undefined ? String(body.distance) : reg.distance;
-        let category = body.category !== undefined ? String(body.category) : reg.category;
-        const entry = distance ? event.catalog[distance] : null;
+        const distance = body.distance !== undefined ? (String(body.distance ?? '') || null) : reg.distance;
+        let category = body.category !== undefined ? (String(body.category ?? '') || null) : reg.category;
+        // Solo claves propias del catálogo: "constructor" o "__proto__" no son distancias.
+        const entry = distance && hasOwn(event.catalog, distance) && Array.isArray(event.catalog[distance]?.categories)
+          ? event.catalog[distance] : null;
         if (distance && !entry) throw bad('Distancia inválida');
-        if (body.distance !== undefined && body.category === undefined && category && !entry.categories.includes(category)) category = null;
+        if (body.distance !== undefined && body.category === undefined && category && !entry?.categories.includes(category)) category = null;
         if (category && (!entry || !entry.categories.includes(category))) throw bad('Categoría inválida');
         patch.distance = distance;
         patch.category = category;
@@ -407,7 +484,30 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
       if (!['draft', 'reserved'].includes(reg.status)) throw new ApiError(409, 'INSTALLMENT_NOT_PAYABLE', 'No hay pagos pendientes');
       if (!reg.plan) throw bad('Elige el plan de pago primero');
       const event = await getEvent(tx, reg.event_id);
-      if (!event.registration_open && reg.status === 'draft') throw new ApiError(409, 'REGISTRATION_CLOSED', 'Las inscripciones no están abiertas');
+
+      if (reg.status === 'draft') {
+        if (!event.registration_open) throw new ApiError(409, 'REGISTRATION_CLOSED', 'Las inscripciones no están abiertas');
+        // La reserva se paga dentro del plazo del plan en cuotas; después el saldo vencería de inmediato.
+        if (reg.plan === 'split' && t >= event.split_closes_at) {
+          throw new ApiError(409, 'PLAN_NOT_AVAILABLE', 'El pago en 2 cuotas ya cerró. Elige pago completo.');
+        }
+        // El código se vuelve a validar al pagar: pudo agotarse, vencer o apagarse después de aplicarlo.
+        if (reg.promo_code_id) {
+          const [current] = await tx`select code from promo_codes where id = ${reg.promo_code_id}`;
+          let r: any;
+          try {
+            r = await resolvePromo(tx, event, reg, current.code);
+          } catch (e: any) {
+            if (e instanceof ApiError && e.code.startsWith('PROMO_')) {
+              throw new ApiError(409, e.code, `El código ${current.code} ya no se puede usar (${e.message.toLowerCase()}). Quítalo para continuar.`);
+            }
+            throw e;
+          }
+          if (r.discount !== reg.discount_cents) {
+            throw new ApiError(409, 'PROMO_CHANGED', `El descuento del código ${current.code} cambió. Vuelve a aplicarlo para ver el nuevo total.`);
+          }
+        }
+      }
 
       const [inst] = await tx`
         select * from installments where registration_id = ${reg.id} and status = 'pending' order by seq limit 1 for update`;
@@ -417,6 +517,13 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
       }
       if (inst.due_at && t > addHours(inst.due_at, event.grace_hours)) {
         throw new ApiError(409, 'INSTALLMENT_NOT_PAYABLE', 'El plazo de esta cuota terminó');
+      }
+      // Un pago en proceso (PSE, Nequi) puede aprobarse en minutos: abrir otro llevaría a un cobro doble.
+      const [inFlight] = await tx`
+        select 1 from payment_attempts
+        where installment_id = ${inst.id} and status = 'PENDING' and created_at > ${addHours(t, -2)} limit 1`;
+      if (inFlight) {
+        throw new ApiError(409, 'PAYMENT_IN_PROGRESS', 'Tienes un pago en proceso para esta cuota. Espera la confirmación (unos minutos) antes de intentar de nuevo.');
       }
 
       const [{ n }] = await tx`select count(*)::int as n from payment_attempts where installment_id = ${inst.id}`;
@@ -470,7 +577,7 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
   app.post('/recovery/request', async (c) => {
     const body = await readJson(c);
     const t = now();
-    await rateLimit(sql, `rec:${clientIp(c)}`, 6, 900, t);
+    await rateLimit(sql, `rec:${clientIp(c)}`, 10, 900, t);
     const docType = String(body.doc_type ?? '').toUpperCase();
     const docNumber = String(body.doc_number ?? '').trim().toUpperCase();
     const [person] = await sql`
@@ -581,7 +688,8 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
   app.get('/internal/outbox/due', async (c) => {
     requireKey(c, cfg.internalApiKey);
     const t = now();
-    const limit = Math.min(50, Math.max(1, Number(c.req.query('limit') ?? 20)));
+    const asked = Number(c.req.query('limit') ?? 20);
+    const limit = Number.isInteger(asked) ? Math.min(50, Math.max(1, asked)) : 20;
     const rows = await sql.begin(async (tx: any) => {
       // Mensajes que perdieron sentido por el estado actual de la inscripción.
       await tx`
@@ -632,7 +740,9 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
       const rows = await tx`
         update registrations r set status = 'expired', updated_at = ${t}
         where r.event_id = ${event.id} and r.status = 'draft' and r.created_at < ${addDays(t, -event.draft_ttl_days)}
-          and not exists (select 1 from payment_attempts a where a.registration_id = r.id and a.status in ('PENDING','APPROVED'))
+          and not exists (
+            select 1 from payment_attempts a where a.registration_id = r.id
+              and (a.status in ('PENDING','APPROVED') or (a.status = 'CREATED' and a.expires_at > ${t})))
         returning r.id`;
       for (const r of rows) await cancelPending(tx, r.id, ['draft_']);
       return rows.length;
@@ -643,7 +753,9 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
         select r.id, r.participant_id from registrations r
         join installments i on i.registration_id = r.id and i.status = 'pending' and i.due_at is not null
         where r.event_id = ${event.id} and r.status = 'reserved' and i.due_at < ${addHours(t, -event.grace_hours)}
-          and not exists (select 1 from payment_attempts a where a.registration_id = r.id and a.status = 'PENDING')
+          and not exists (
+            select 1 from payment_attempts a where a.registration_id = r.id
+              and (a.status = 'PENDING' or (a.status = 'CREATED' and a.expires_at > ${t})))
         for update of r`;
       for (const r of rows) {
         await tx`update installments set status = 'void' where registration_id = ${r.id} and status = 'pending'`;
@@ -680,6 +792,7 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
     await sql`delete from rate_limits where bucket < ${Math.floor(t.getTime() / 1000 / 3600) - 48} and key like '%:3600'`;
     await sql`delete from rate_limits where bucket < ${Math.floor(t.getTime() / 1000 / 600) - 288} and key like '%:600'`;
     await sql`delete from rate_limits where bucket < ${Math.floor(t.getTime() / 1000 / 900) - 192} and key like '%:900'`;
+    await sql`delete from rate_limits where bucket < ${Math.floor(t.getTime() / 1000 / 86400) - 2} and key like '%:86400'`;
     return c.json({ expired_drafts: expiredDrafts, expired_reservations: expiredReservations, reconciled });
   });
 
@@ -693,17 +806,24 @@ export function createApp({ sql, cfg, now = () => new Date(), fetchImpl = (u, i)
     const type = String(b.type ?? '');
     const value = Number(b.value);
     if (!['percent', 'fixed'].includes(type)) throw bad('type debe ser percent o fixed');
-    if (!Number.isInteger(value) || value <= 0 || (type === 'percent' && value > 100)) throw bad('value inválido');
+    if (!Number.isInteger(value) || value <= 0 || value > 1_000_000_000 || (type === 'percent' && value > 100)) throw bad('value inválido');
     const max = intOrNull(b.max_redemptions);
-    if (max != null && (!Number.isInteger(max) || max <= 0)) throw bad('max_redemptions inválido');
+    if (max != null && (!Number.isInteger(max) || max <= 0 || max > 1_000_000)) throw bad('max_redemptions inválido');
+    const perDoc = intOrNull(b.per_document_limit) ?? 1;
+    if (!Number.isInteger(perDoc) || perDoc < 1 || perDoc > 100) throw bad('per_document_limit inválido');
+    const minTotal = intOrNull(b.min_total_cents) ?? 0;
+    if (!Number.isInteger(minTotal) || minTotal < 0 || minTotal > 1_000_000_000) throw bad('min_total_cents inválido');
+    const appliesTo = Array.isArray(b.applies_to) ? b.applies_to.map(String) : [];
+    if (appliesTo.length > 20 || appliesTo.some((d: string) => !/^[\w-]{1,20}$/.test(d))) throw bad('applies_to inválido');
     const doc = textOrNull(b.allowed_doc_number, 15)?.toUpperCase() ?? null;
     if (doc && !/^[0-9A-Z]{5,15}$/.test(doc)) throw bad('allowed_doc_number inválido');
     const from = dateOrNull(b.valid_from), until = dateOrNull(b.valid_until);
     if ((from && isNaN(from.getTime())) || (until && isNaN(until.getTime()))) throw bad('fecha inválida');
+    if (from && until && from > until) throw bad('valid_from es posterior a valid_until');
     return {
-      type, value, max_redemptions: max, per_document_limit: Number(b.per_document_limit ?? 1),
-      valid_from: from, valid_until: until, min_total_cents: Number(b.min_total_cents ?? 0),
-      applies_to: Array.isArray(b.applies_to) ? b.applies_to.map(String) : [], active: b.active !== false,
+      type, value, max_redemptions: max, per_document_limit: perDoc,
+      valid_from: from, valid_until: until, min_total_cents: minTotal,
+      applies_to: appliesTo, active: b.active !== false,
       allowed_doc_number: doc, note: textOrNull(b.note, 120),
     };
   }

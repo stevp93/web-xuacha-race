@@ -52,6 +52,7 @@ before(async () => {
   await sql.unsafe(readFileSync(root + 'supabase/migrations/20261116000000_init.sql', 'utf8'));
   await sql.unsafe(readFileSync(root + 'supabase/migrations/20261116000100_promo_personal.sql', 'utf8'));
   await sql.unsafe(readFileSync(root + 'supabase/migrations/20261116000200_indexes.sql', 'utf8'));
+  await sql.unsafe(readFileSync(root + 'supabase/migrations/20261120000000_revoke_public_roles.sql', 'utf8'));
   await sql.unsafe(readFileSync(root + 'supabase/seed.sql', 'utf8'));
   await sql`update events set registration_open = true`;
   app = createApp({ sql, cfg, now: () => clock, fetchImpl });
@@ -78,7 +79,8 @@ let docSeq = 1000000;
 async function newRegistration(overrides: any = {}) {
   const doc = String(++docSeq);
   const r = await call('POST', '/registrations', {
-    body: { full_name: 'Ana Prueba', doc_type: 'CC', doc_number: doc, email: `ana${doc}@ejemplo.com`, whatsapp: '3001234567', consent: true, ...overrides },
+    // WhatsApp distinto por inscripción: hay un límite diario de inscripciones por número.
+    body: { full_name: 'Ana Prueba', doc_type: 'CC', doc_number: doc, email: `ana${doc}@ejemplo.com`, whatsapp: '300' + doc.slice(-7), consent: true, ...overrides },
   });
   return { ...r, doc, token: r.json?.resume_token as string };
 }
@@ -123,7 +125,7 @@ test('crea borrador con datos mínimos y valida entradas', async () => {
   assert.match(r.token, /^rt_/);
   assert.equal(r.json.registration.status, 'draft');
   assert.equal(r.json.registration.total_cents, 11000000);
-  assert.equal(r.json.registration.participant.whatsapp, '+573001234567');
+  assert.equal(r.json.registration.participant.whatsapp, '+57300' + r.doc.slice(-7));
 
   for (const bad of [{ consent: false }, { email: 'no-es-correo' }, { whatsapp: '123' }, { full_name: 'Ana' }, { doc_type: 'XX' }]) {
     const e = await newRegistration(bad);
@@ -412,9 +414,19 @@ test('vencimientos: checkout del saldo bloqueado tras la gracia y cupo liberado 
 });
 
 test('límite de peticiones y CORS', async () => {
-  let last = 0;
-  for (let i = 0; i < 12; i++) {
+  // Los errores de digitación no gastan intentos.
+  for (let i = 0; i < 35; i++) {
     const r = await call('POST', '/registrations', { body: {}, headers: { 'x-forwarded-for': '203.0.113.9' } });
+    assert.equal(r.status, 422);
+  }
+  // 30 inscripciones válidas por hora desde una misma IP (margen para redes móviles compartidas).
+  let last = 0;
+  for (let i = 0; i < 31; i++) {
+    const doc = String(++docSeq);
+    const r = await call('POST', '/registrations', {
+      body: { full_name: 'Ana Prueba', doc_type: 'CC', doc_number: doc, email: `l${doc}@ejemplo.com`, whatsapp: '301' + doc.slice(-7), consent: true },
+      headers: { 'x-forwarded-for': '203.0.113.9' },
+    });
     last = r.status;
   }
   assert.equal(last, 429);
@@ -518,4 +530,197 @@ test('pasarela sin configurar: no hay checkout y ningún evento es aceptado', as
   }
   const health = await (await bare.request('/api/health')).json();
   assert.deepEqual([health.gateway_configured, health.admin_configured, health.internal_configured], [false, false, false]);
+});
+
+// ---------- regresiones de la auditoría del 20 de noviembre de 2026 ----------
+
+test('nombre: solo letras; HTML, fórmulas, números y enlaces se rechazan', async () => {
+  for (const name of ['<img src=x onerror=alert(1)> Perez', '=HYPERLINK("http://x") Ana', 'Ana 123', 'bit.ly/premio Ana', 'Ana "Pérez"']) {
+    const r = await newRegistration({ full_name: name });
+    assert.equal(r.status, 422, name);
+  }
+  for (const name of ['María José Pérez-Gómez', "D'Angelo Rueda", 'Ñandú  Ávila']) {
+    const r = await newRegistration({ full_name: name });
+    assert.equal(r.status, 201, name);
+  }
+  const [row] = await sql`select full_name from participants where full_name like 'Ñandú%'`;
+  assert.equal(row.full_name, 'Ñandú Ávila', 'espacios normalizados');
+  assert.equal((await newRegistration({ email: 'a<b>@x.co' })).status, 422);
+});
+
+test('distancias que no son del catálogo: 422, nunca 500', async () => {
+  const reg = await newRegistration();
+  for (const d of ['constructor', '__proto__', 'toString', 'hasOwnProperty']) {
+    const r = await call('PATCH', '/registrations/me', { token: reg.token, body: { distance: d, category: 'x' } });
+    assert.equal(r.status, 422, d);
+    const r2 = await call('PATCH', '/registrations/me', { token: reg.token, body: { distance: d } });
+    assert.equal(r2.status, 422, d);
+  }
+  assert.equal((await me(reg.token)).json.distance, null);
+});
+
+test('cuerpo demasiado grande: 413 antes de procesar', async () => {
+  const big = JSON.stringify({ full_name: 'a'.repeat(40 * 1024) });
+  const res = await app.request('/api/registrations', { method: 'POST', headers: { 'content-type': 'application/json' }, body: big });
+  assert.equal(res.status, 413);
+  assert.equal((await res.json()).error.code, 'PAYLOAD_TOO_LARGE');
+  // Sin Content-Length (por partes): también se corta en el límite.
+  const stream = new ReadableStream({
+    start(ctl) { for (let i = 0; i < 20; i++) ctl.enqueue(new TextEncoder().encode('a'.repeat(4096))); ctl.close(); },
+  });
+  const chunked = await app.request('/api/registrations', { method: 'POST', headers: { 'content-type': 'application/json' }, body: stream, duplex: 'half' } as any);
+  assert.equal(chunked.status, 413);
+  // Un cuerpo pequeño por partes llega completo al manejador.
+  const small = new ReadableStream({ start(ctl) { ctl.enqueue(new TextEncoder().encode('{"full_name":')); ctl.enqueue(new TextEncoder().encode('"x"}')); ctl.close(); } });
+  const ok = await app.request('/api/registrations', { method: 'POST', headers: { 'content-type': 'application/json' }, body: small, duplex: 'half' } as any);
+  assert.equal(ok.status, 422);
+  assert.equal((await ok.json()).error.message, 'Escribe nombre y apellido');
+  const nf = await app.request('/api/no-existe');
+  assert.equal(nf.status, 404);
+  assert.equal((await nf.json()).error.code, 'NOT_FOUND');
+});
+
+test('al pagar se revalida el código: agotado, apagado o cambiado no se cobra con descuento', async () => {
+  const H = { headers: { authorization: 'Bearer admin-key' } };
+  await call('POST', '/admin/promo-codes', { ...H, body: { code: 'SOLO1', type: 'percent', value: 20, max_redemptions: 1 } });
+  const a = await readyToPay('full', 'SOLO1');
+  const b = await readyToPay('full', 'SOLO1');
+  await wompiEvent((await checkout(a.token)).json.reference, 8800000);
+  const cb = await checkout(b.token);
+  assert.equal(cb.status, 409);
+  assert.equal(cb.json.error.code, 'PROMO_EXHAUSTED');
+  // Quitando el código paga el precio completo.
+  await call('PATCH', '/registrations/me', { token: b.token, body: { promo_code: null } });
+  const ok = await checkout(b.token);
+  assert.equal(ok.status, 201);
+  assert.equal(ok.json.amount_in_cents, 11000000);
+
+  await call('POST', '/admin/promo-codes', { ...H, body: { code: 'APAGABLE', type: 'percent', value: 10 } });
+  const c = await readyToPay('full', 'APAGABLE');
+  await call('POST', '/admin/promo-codes', { ...H, body: { code: 'APAGABLE', type: 'percent', value: 10, active: false } });
+  assert.equal((await checkout(c.token)).json.error.code, 'PROMO_INVALID');
+
+  await call('POST', '/admin/promo-codes', { ...H, body: { code: 'CAMBIA', type: 'percent', value: 10 } });
+  const d = await readyToPay('full', 'CAMBIA');
+  await call('POST', '/admin/promo-codes', { ...H, body: { code: 'CAMBIA', type: 'percent', value: 5 } });
+  assert.equal((await checkout(d.token)).json.error.code, 'PROMO_CHANGED');
+  const re = await call('PATCH', '/registrations/me', { token: d.token, body: { promo_code: 'CAMBIA' } });
+  assert.equal(re.json.total_cents, 10450000);
+  assert.equal((await checkout(d.token)).json.amount_in_cents, 10450000);
+});
+
+test('plan en cuotas elegido antes del cierre no se paga después del cierre', async () => {
+  const saved = clock;
+  try {
+    clock = new Date('2027-03-26T15:00:00Z');                       // un día antes del cierre
+    const reg = await readyToPay('split');
+    clock = new Date('2027-03-28T15:00:00Z');                       // el token sigue vigente
+    const r = await checkout(reg.token);
+    assert.equal(r.status, 409);
+    assert.equal(r.json.error.code, 'PLAN_NOT_AVAILABLE');
+    assert.equal((await call('PUT', '/registrations/me/plan', { token: reg.token, body: { plan: 'full' } })).status, 200);
+    assert.equal((await checkout(reg.token)).json.amount_in_cents, 11000000);
+  } finally {
+    clock = saved;
+  }
+});
+
+test('pago en proceso: no se abre otro checkout para la misma cuota', async () => {
+  const saved = clock;
+  const reg = await readyToPay('full');
+  const first = await checkout(reg.token);
+  await wompiEvent(first.json.reference, 11000000, 'PENDING');
+  const again = await checkout(reg.token);
+  assert.equal(again.status, 409);
+  assert.equal(again.json.error.code, 'PAYMENT_IN_PROGRESS');
+  clock = new Date(clock.getTime() + 3 * 3600_000); // un pendiente viejo ya no bloquea
+  assert.equal((await checkout(reg.token)).status, 201);
+  clock = saved;
+});
+
+test('el cron no vence una inscripción con un pago abierto en la pasarela', async () => {
+  const saved = clock;
+  const reg = await readyToPay('full');
+  const [{ id }] = await sql`select r.id from registrations r join participants p on p.id = r.participant_id where p.doc_number = ${reg.doc}`;
+  const [ev] = await sql`select draft_ttl_days from events`;
+  clock = new Date(saved.getTime() + ev.draft_ttl_days * 86400_000 - 10 * 60_000);
+  await checkout(reg.token);                                        // abre el pago 10 minutos antes de vencer
+  clock = new Date(clock.getTime() + 15 * 60_000);                  // el borrador ya cumplió su plazo
+  await call('POST', '/internal/cron', { headers: { authorization: 'Bearer internal-key' } });
+  assert.equal((await sql`select status from registrations where id = ${id}`)[0].status, 'draft', 'no vence con el pago abierto');
+  clock = new Date(clock.getTime() + 40 * 60_000);                  // el checkout expiró sin pago
+  await call('POST', '/internal/cron', { headers: { authorization: 'Bearer internal-key' } });
+  assert.equal((await sql`select status from registrations where id = ${id}`)[0].status, 'expired');
+  clock = saved;
+});
+
+test('empezar de nuevo: reemplaza un borrador sin pagos, nunca uno con pagos', async () => {
+  const a = await newRegistration();
+  const body = { full_name: 'Ana Corregida', doc_type: 'CC', doc_number: a.doc, email: `nueva${a.doc}@ejemplo.com`, whatsapp: '3119876543', consent: true };
+  assert.equal((await call('POST', '/registrations', { body })).json.error.code, 'REGISTRATION_EXISTS');
+  const r = await call('POST', '/registrations', { body: { ...body, replace_draft: true } });
+  assert.equal(r.status, 201);
+  assert.equal(r.json.registration.participant.whatsapp, '+573119876543');
+  assert.equal((await me(a.token)).json.status, 'cancelled', 'el borrador anterior queda cancelado');
+  const pending = await sql`
+    select count(*)::int as n from notifications_outbox o join registrations x on x.id = o.registration_id
+    where x.status = 'cancelled' and o.status = 'pending' and x.participant_id = (select id from participants where doc_number = ${a.doc})`;
+  assert.equal(pending[0].n, 0, 'sin recordatorios del borrador anterior');
+
+  const paid = await readyToPay('split');
+  await wompiEvent((await checkout(paid.token)).json.reference, 5500000);
+  const steal = await call('POST', '/registrations', {
+    body: { full_name: 'Otra Persona', doc_type: 'CC', doc_number: paid.doc, email: 'x@ejemplo.com', whatsapp: '3125550000', consent: true, replace_draft: true },
+  });
+  assert.equal(steal.json.error.code, 'REGISTRATION_NOT_REPLACEABLE');
+  const [p] = await sql`select whatsapp_e164 from participants where doc_number = ${paid.doc}`;
+  assert.equal(p.whatsapp_e164, '+57300' + paid.doc.slice(-7), 'los datos de quien pagó no cambian');
+});
+
+test('límite por número de WhatsApp: nadie puede llenar de mensajes un número ajeno', async () => {
+  let last = 0;
+  for (let i = 0; i < 6; i++) last = (await newRegistration({ whatsapp: '3150000001' })).status;
+  assert.equal(last, 429);
+});
+
+test('panel: datos inválidos dan 422, nunca 500; límite no numérico en la cola', async () => {
+  const H = { authorization: 'Bearer admin-key' };
+  for (const extra of [{ per_document_limit: 'x' }, { per_document_limit: 0 }, { min_total_cents: -1 }, { applies_to: ['<x>'] },
+    { value: 5_000_000_000 }, { valid_from: '2027-02-01', valid_until: '2027-01-01' }]) {
+    const r = await call('POST', '/admin/promo-codes', { headers: H, body: { code: 'MAL1', type: 'fixed', value: 1000, ...extra } });
+    assert.equal(r.status, 422, JSON.stringify(extra));
+  }
+  const q = await call('GET', '/internal/outbox/due?limit=abc', { headers: { authorization: 'Bearer internal-key' } });
+  assert.equal(q.status, 200);
+});
+
+test('IP del cliente: el servidor propio usa la que le indica su entrada, no la del encabezado', async () => {
+  const fixed = createApp({ sql, cfg, now: () => clock, fetchImpl, clientIp: () => '198.51.100.7' });
+  for (let i = 0; i < 11; i++) {
+    await fixed.request('/api/admin/summary', { headers: { authorization: 'Bearer mala', 'x-forwarded-for': `1.1.1.${i}` } });
+  }
+  const [row] = await sql`select count from rate_limits where key = 'adm:198.51.100.7:900'`;
+  assert.equal(row.count, 11, 'todas cuentan para la misma IP aunque el encabezado cambie');
+});
+
+test('salud: avisa si la llave y la API de Wompi son de entornos distintos', async () => {
+  const mixed = createApp({ sql, cfg: { ...cfg, wompi: { ...cfg.wompi, publicKey: 'pub_prod_x', apiBase: 'https://sandbox.wompi.co/v1' } } });
+  const h = await (await mixed.request('/api/health')).json();
+  assert.equal(h.gateway_env, 'production');
+  assert.equal(h.gateway_mismatch, true);
+  const ok = await (await app.request('/api/health')).json();
+  assert.equal(ok.gateway_mismatch, false);
+});
+
+test('checkout: el teléfono solo se prellena para números de Colombia', async () => {
+  const co = await readyToPay('full');
+  const url = new URL((await checkout(co.token)).json.checkout_url);
+  assert.equal(url.searchParams.get('customer-data:phone-number'), '300' + co.doc.slice(-7));
+  const doc = String(++docSeq);
+  const fr = await call('POST', '/registrations', { body: { full_name: 'Jean Dupont', doc_type: 'PP', doc_number: 'FR' + doc, email: `j${doc}@ejemplo.com`, whatsapp: '+33612345678', consent: true } });
+  await call('PATCH', '/registrations/me', { token: fr.json.resume_token, body: { distance: '25K', category: 'Masculino' } });
+  await call('PUT', '/registrations/me/plan', { token: fr.json.resume_token, body: { plan: 'full' } });
+  const u2 = new URL((await checkout(fr.json.resume_token)).json.checkout_url);
+  assert.equal(u2.searchParams.get('customer-data:phone-number'), null);
+  assert.equal(u2.searchParams.get('customer-data:phone-number-prefix'), null);
 });

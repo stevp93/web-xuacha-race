@@ -1,6 +1,7 @@
 // Lee la configuración del entorno. Funciona en Deno (Supabase) y en Node.
 
 import type { AppConfig } from './app.ts';
+import { apiBaseFor } from './wompi.ts';
 
 export const env = (name: string): string | undefined =>
   (globalThis as any).Deno?.env?.get(name) ?? (globalThis as any).process?.env?.[name];
@@ -17,17 +18,19 @@ export function databaseUrl(): string {
 // internas y de administración responden 401).
 export function loadConfig(): AppConfig {
   const siteUrl = (env('SITE_URL') ?? 'https://www.xuacharace.com').replace(/\/+$/, '');
+  const publicKey = env('WOMPI_PUBLIC_KEY') ?? '';
   return {
     eventId: env('EVENT_ID') ?? 'xr2027',
     siteUrl,
     allowedOrigins: (env('ALLOWED_ORIGINS') ?? `${siteUrl},${siteUrl.replace('://www.', '://')}`).split(',').map((s) => s.trim()).filter(Boolean),
     basePath: env('API_BASE_PATH') ?? '/api',
     wompi: {
-      publicKey: env('WOMPI_PUBLIC_KEY') ?? '',
+      publicKey,
       privateKey: env('WOMPI_PRIVATE_KEY') ?? '',
       integritySecret: env('WOMPI_INTEGRITY_SECRET') ?? '',
       eventsSecret: env('WOMPI_EVENTS_SECRET') ?? '',
-      apiBase: (env('WOMPI_API_BASE') ?? 'https://sandbox.wompi.co/v1').replace(/\/+$/, ''),
+      // Sin WOMPI_API_BASE se deduce de la llave, para que una llave de producción nunca consulte el sandbox.
+      apiBase: (env('WOMPI_API_BASE') || apiBaseFor(publicKey)).replace(/\/+$/, ''),
     },
     internalApiKey: env('INTERNAL_API_KEY') ?? '',
     adminApiKey: env('ADMIN_API_KEY') ?? '',
