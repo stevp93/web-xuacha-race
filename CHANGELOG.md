@@ -1,5 +1,55 @@
 # Cambios
 
+## 2027.2 · 20 de noviembre de 2026 · auditoría de seguridad y pruebas de extremo a extremo
+
+Pruebas: 37 de integración (13 nuevas de regresión) y 21 de extremo a extremo con navegador
+contra la API real y un simulador de Wompi (`backend/tests/e2e/`). Producción revisada en modo
+de solo lectura: CORS, firma de webhooks, rutas internas, IP del cliente y acceso a la base.
+
+### Seguridad
+- **Dependencias**: la función de Supabase corría Hono 4.6.14, con avisos de seguridad publicados
+  (entre ellos ReDoS en el middleware de CORS). Pasa a Hono 4.13.19, postgres 3.4.9 y
+  `@hono/node-server` 2.1.11 (el respaldo en Node tenía un aviso moderado). `npm audit`: 0.
+- **Base de datos**: los roles públicos `anon` y `authenticated` tenían todos los permisos sobre
+  las tablas, incluido `TRUNCATE`, frenados solo por RLS. La migración `20261120000000` los retira,
+  también para tablas futuras.
+- **Nombre**: se aceptaba cualquier texto (HTML, fórmulas de Excel, enlaces) que luego viajaba a
+  los mensajes de WhatsApp enviados a un número escrito por quien se inscribe y a los CSV del
+  panel. Ahora solo letras, espacios, apóstrofo y guion, y los mensajes usan el primer nombre
+  recortado a 20 caracteres.
+- **CSV del panel**: las celdas que empiezan por `=`, `+`, `-` o `@` se exportan como texto.
+- **Límites de intentos**: nuevo límite de 5 inscripciones por día por número de WhatsApp, para
+  que nadie use el formulario para llenar de mensajes un número ajeno. El de IP sube de 10 a 30
+  por hora (redes móviles compartidas) y ya no lo gastan los errores de digitación.
+- **IP del cliente**: verificado en producción que no se puede falsificar en Supabase. El servidor
+  de respaldo ya no confía en encabezados enviados por el cliente (`TRUSTED_IP_HEADER`).
+- **Cuerpos de más de 32 KB**: rechazados con 413 sin guardarlos en memoria ni procesarlos (antes
+  se leían y se intentaban interpretar hasta 3 MB). Lo que sobra se descarta en lectura antes de
+  responder: en Supabase, responder sin leer un cuerpo grande dejaba la conexión colgada.
+- **Política de seguridad de contenido (CSP)** en inscripción, resultado y panel; el script y
+  los estilos en línea de `resultado.html` pasan a archivos.
+
+### Pagos y lógica de negocio
+- Un código de un solo uso agotado, vencido o apagado se seguía cobrando con descuento a quien
+  ya lo había aplicado. Ahora se revalida al abrir el pago y el formulario vuelve al paso 2 con
+  el motivo.
+- Un plan en cuotas elegido antes del cierre se podía pagar después, con el saldo ya vencido.
+- Se podía abrir un segundo pago mientras otro seguía en proceso (riesgo de cobro doble).
+- El cron podía vencer una inscripción mientras la persona estaba pagando en la pasarela.
+- Si un pago se aprobaba sobre una inscripción ya vencida, la página de resultado se quedaba en
+  "en proceso"; ahora informa que el pago quedó en revisión con la referencia.
+- La API deduce el entorno de Wompi de la llave pública y `/health` avisa si no coinciden.
+
+### Formulario
+- **Otra persona en el mismo dispositivo**: no había forma de inscribir a una segunda persona
+  desde el mismo teléfono; nuevo botón "Inscribir a otra persona".
+- **WhatsApp mal escrito**: quien se equivocaba de número quedaba bloqueado 7 días (el código
+  llegaba a otro número y el documento ya estaba ocupado). Nueva opción "Empieza de nuevo",
+  solo para borradores sin pagos.
+- El aviso "El pago en línea aún no está habilitado" se mostraba como "Sin conexión con el
+  servidor".
+- Distancias como `constructor` provocaban errores 500; datos inválidos del panel también.
+
 ## 2027.1 · 18 de noviembre de 2026
 
 ### Calidad de la animación en celular

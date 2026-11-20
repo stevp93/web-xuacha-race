@@ -83,8 +83,10 @@ En Supabase no hace falta `DATABASE_URL`: la plataforma entrega `SUPABASE_DB_URL
    (una por ambiente).
 3. Solicitar a soporte de Wompi la activación de 3D Secure, una solicitud para sandbox y
    otra para producción.
-4. Al pasar a producción: llaves `pub_prod_`/`prv_prod_` y
-   `WOMPI_API_BASE=https://production.wompi.co/v1`.
+4. Al pasar a producción: llaves `pub_prod_`/`prv_prod_`. Si `WOMPI_API_BASE` no se define,
+   la API la deduce de la llave pública (producción para `pub_prod_`, sandbox para el resto).
+   `GET /api/health` muestra `gateway_env` y marca `gateway_mismatch: true` si la llave y la
+   API quedaron de entornos distintos.
 
 ## 4. Conectar el formulario
 
@@ -120,7 +122,10 @@ docker compose up -d --build        # usa ../.env con DATABASE_URL apuntando a S
 ```
 
 Publicarlo con HTTPS detrás de un proxy y poner esa URL en `fallbackApiBase` de
-`xr-config.js`. El formulario pasa al respaldo solo si la API principal no responde
+`xr-config.js`. Definir `TRUSTED_IP_HEADER` con el encabezado que escribe ese proxy
+(`x-real-ip`, `x-forwarded-for` o `cf-connecting-ip`): sin él, la API usa la dirección de la
+conexión y, detrás de un proxy, todos los visitantes compartirían el mismo límite de intentos.
+En Supabase no hace falta: Cloudflare fija la IP y rechaza la que mande el cliente. El formulario pasa al respaldo solo si la API principal no responde
 (error de red o 502/503/504). Ambas APIs usan la misma base, así que no hay datos divididos.
 
 - Si caen las Edge Functions, Wompi reintenta el evento (30 min, 3 h, 24 h) y, mientras
@@ -170,14 +175,30 @@ TEST_DATABASE_URL=postgres://usuario@localhost:5432/postgres npm test
 ```
 
 Crean una base temporal y la eliminan. Cubren firma alterada, idempotencia, monto
-distinto, cuotas, recordatorios, códigos, recuperación, conciliación y vencimientos.
+distinto, cuotas, recordatorios, códigos, recuperación, conciliación y vencimientos, y las
+regresiones de la auditoría de seguridad (37 pruebas).
+
+### De extremo a extremo (navegador)
+
+```bash
+pip install playwright && playwright install chromium
+E2E_PG=postgres://usuario@localhost:5432 tests/e2e/run.sh
+```
+
+Levanta una base limpia, la API con y sin pasarela, un simulador de Wompi
+(`tests/e2e/mock-wompi.mjs`: checkout que valida la firma de integridad y webhooks firmados) y
+el sitio; recorre con Chromium el sitio público, la inscripción completa (pago total, reserva y
+saldo, rechazo, pago pendiente, retomar por enlace y por código, empezar de nuevo, otra persona
+en el mismo dispositivo), el panel (códigos, QR, CSV, libro, control) y casos de ataque (HTML y
+fórmulas en el nombre, webhooks alterados, códigos agotados o apagados). 21 pruebas; las
+capturas quedan en `tests/e2e/shots/`.
 
 ## Rutas
 
 | Método y ruta (`/api`) | Autenticación |
 | --- | --- |
 | `GET /event`, `GET /health` | pública |
-| `POST /registrations` | pública, con límite por IP |
+| `POST /registrations` | pública; 30 por hora por IP y 5 por día por número de WhatsApp |
 | `GET`/`PATCH /registrations/me`, `PUT /registrations/me/plan` | token de inscripción |
 | `POST /registrations/me/checkout`, `POST /registrations/me/sync`, `POST /promo/validate` | token de inscripción |
 | `POST /recovery/request`, `POST /recovery/verify` | pública, con límite por IP |
@@ -185,6 +206,31 @@ distinto, cuotas, recordatorios, códigos, recuperación, conciliación y vencim
 | `GET /internal/outbox/due`, `POST /internal/outbox/:id/ack`, `POST /internal/cron` | `INTERNAL_API_KEY` |
 | `POST /admin/promo-codes`, `POST /admin/promo-codes/batch`, `GET /admin/promo-codes` | `ADMIN_API_KEY` |
 | `GET /admin/summary`, `GET /admin/ledger`, `GET /admin/control` | `ADMIN_API_KEY` |
+
+## Seguridad
+
+Auditoría y pruebas de extremo a extremo del 20 de noviembre de 2026 (detalle en `CHANGELOG.md`):
+
+- **Montos y estados**: el navegador nunca envía montos; los pagos solo cambian por un evento
+  con firma válida o por consulta servidor a servidor. Al abrir el pago se revalida el código
+  de descuento (agotado, vencido, apagado o con otro valor → `409 PROMO_*`), el plan en cuotas
+  (`409 PLAN_NOT_AVAILABLE` después del cierre) y que no haya otro pago en proceso para la
+  misma cuota (`409 PAYMENT_IN_PROGRESS`, evita cobros dobles con PSE o Nequi).
+- **Vencimientos**: el cron no vence borradores ni reservas con un checkout abierto, para no
+  cobrar sobre una inscripción ya liberada.
+- **Entradas**: nombre solo con letras (sin HTML, números, enlaces ni fórmulas; viaja a
+  WhatsApp y a los CSV), distancia solo del catálogo, cuerpos de hasta 32 KB (`413`; el exceso
+  se lee y se descarta antes de responder, porque en Supabase una respuesta temprana a un cuerpo
+  grande deja la conexión colgada).
+- **Empezar de nuevo**: `POST /registrations` con `replace_draft: true` reemplaza un borrador
+  sin pagos del mismo documento (WhatsApp mal escrito); nunca uno reservado, pagado o con un
+  pago en curso (`409 REGISTRATION_NOT_REPLACEABLE`).
+- **Base de datos**: RLS activo y, desde la migración `20261120000000`, sin permisos para los
+  roles públicos `anon` y `authenticated` (antes tenían todos, incluido `TRUNCATE`).
+- **Dependencias**: Hono 4.13.19 (la 4.6.14 tenía avisos de seguridad publicados, entre ellos
+  denegación de servicio en CORS), postgres 3.4.9 y `@hono/node-server` 2.1.11. `npm audit`: 0.
+- **Navegador**: inscripción, resultado y panel con política de seguridad de contenido (CSP)
+  sin scripts en línea; el CSV del panel neutraliza fórmulas (`=`, `+`, `-`, `@`).
 
 ## Pendiente de validar con cuentas reales
 

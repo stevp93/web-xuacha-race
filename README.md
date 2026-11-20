@@ -7,12 +7,13 @@ Desarrollo: [SP Automatizaciones](https://stevp93.github.io/SP-AUTOMATIZACIONES-
 
 ---
 
-## Estado (18 de noviembre de 2026)
+## Estado (20 de noviembre de 2026)
 
 | Parte | Estado |
 | --- | --- |
 | Sitio público (4 páginas) | Listo y publicado con este commit |
 | Formulario de inscripción, resultado y panel de administración | Listos; inscripciones **cerradas** |
+| Seguridad | Auditado el 20 de noviembre de 2026: 37 pruebas de integración y 21 de extremo a extremo ([`CHANGELOG.md`](CHANGELOG.md)) |
 | API de cobro en Supabase | Desplegada y probada; sin llaves de pasarela |
 | **Plataforma de pagos** | **Pendiente de definir.** Hay un adaptador de Wompi implementado; ver [`backend/README.md`](backend/README.md) |
 | Fecha y valores de la edición 2027 | Por anunciar (el sitio no los muestra a propósito) |
